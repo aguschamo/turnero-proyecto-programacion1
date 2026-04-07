@@ -1,62 +1,45 @@
 # Programacion1
-# 💅 Sistema de Turnos para Manicurista
+# Sistema de Turnos para Manicurista
 
-## 📌 Descripción del sistema
+## Descripción del Sistema
 
 El sistema consiste en una API para la gestión de turnos de una manicurista.
 Los usuarios podrán registrarse, iniciar sesión y reservar turnos para distintos servicios disponibles.
 
----
+## Entidades
 
-## 🧩 Entidades
+### Usuario
 
-### 👤 Usuario
+- id_usuario (PK)
+- nombre
+- email
+- contraseña
 
-* id_usuario (PK)
-* nombre
-* email
-* contraseña
+### Servicio
 
----
+- id_servicio (PK)
+- nombre
+- duracion
+- precio
 
-### 💅 Servicio
+### Turno
 
-* id_servicio (PK)
-* nombre
-* duracion
-* precio
+- id_turno (PK)
+- fecha
+- hora
+- id_usuario (FK)
+- id_servicio (FK)
+- estado (pendiente, confirmado, cancelado)
 
----
+## Relaciones
 
-### 📅 Turno
+- Usuario - Turno: 1:N (un usuario puede tener múltiples turnos)
+- Servicio - Turno: 1:N (un servicio puede estar asociado a múltiples turnos)
+- Turno - Usuario: N:1 (un turno pertenece a un único usuario)
+- Turno - Servicio: N:1 (un turno pertenece a un único servicio)
 
-* id_turno (PK)
-* fecha
-* hora
-* id_usuario (FK)
-* id_servicio (FK)
-* estado (pendiente, confirmado, cancelado)
+## Reglas del Sistema
 
----
-
-## 🔗 Relaciones
-
-* Un usuario puede tener múltiples turnos (1:N)
-* Un servicio puede estar asociado a múltiples turnos (1:N)
-* Un turno pertenece a un único usuario y a un único servicio
-
----
-
-## 🧠 Reglas del sistema
-
-* Un usuario debe estar registrado para poder reservar un turno
-* No pueden existir dos turnos en la misma fecha y hora
-* Cada turno debe estar asociado a un servicio válido
-
----
-
-## 🚀 Futuras mejoras
-
-* Implementar autenticación de usuarios
-* Agregar gestión de horarios disponibles
-* Incorporar cancelación y modificación de turnos
+- Un usuario debe estar registrado para poder reservar un turno
+- No pueden existir dos turnos en la misma fecha y hora
+- Cada turno debe estar asociado a un servicio válido
