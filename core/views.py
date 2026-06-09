@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Servicio, Turno
-from .permissions import IsAdminOrVendedor, IsOwnerOrAdmin, ReadOnly
+from .permissions import IsAdminOrVendedor, IsOwnerOrAdmin
 from .serializers import ServicioSerializer, TurnoSerializer
 
 
@@ -11,9 +11,9 @@ class ServicioViewSet(viewsets.ModelViewSet):
     serializer_class = ServicioSerializer
 
     def get_permissions(self):
-        if self.request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
-            return [IsAdminOrVendedor()]
-        return []
+        if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
+            return []
+        return [IsAdminOrVendedor()]
 
 
 class TurnoViewSet(viewsets.ModelViewSet):
@@ -26,7 +26,7 @@ class TurnoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role == 'ADMIN':
+        if user.is_staff or user.role == 'ADMIN':
             return Turno.objects.all()
         return Turno.objects.filter(usuario=user)
 

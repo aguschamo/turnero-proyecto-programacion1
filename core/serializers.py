@@ -6,11 +6,11 @@ from .models import Servicio, Turno
 class ServicioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Servicio
-        fields = '__all__'
+        fields = ('id', 'nombre', 'duracion', 'precio')
 
 
 class TurnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turno
-        fields = '__all__'
-        read_only_fields = ('usuario',)
+        fields = ('id', 'fecha', 'hora', 'usuario', 'servicio', 'estado')
+        read_only_fields = ('usuario', 'estado')

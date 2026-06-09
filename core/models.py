@@ -1,25 +1,24 @@
+from datetime import timedelta
+
 from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
 class Servicio(models.Model):
     nombre = models.CharField(max_length=100)
-    duracion = models.DurationField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    duracion = models.DurationField(validators=[MinValueValidator(timedelta(minutes=1))])
+    precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.nombre
 
 
 class Turno(models.Model):
-    PENDIENTE = 'pendiente'
-    CONFIRMADO = 'confirmado'
-    CANCELADO = 'cancelado'
-    ESTADOS = [
-        (PENDIENTE, 'Pendiente'),
-        (CONFIRMADO, 'Confirmado'),
-        (CANCELADO, 'Cancelado'),
-    ]
+    class Estado(models.TextChoices):
+        PENDIENTE = 'pendiente', 'Pendiente'
+        CONFIRMADO = 'confirmado', 'Confirmado'
+        CANCELADO = 'cancelado', 'Cancelado'
 
     fecha = models.DateField()
     hora = models.TimeField()
@@ -29,7 +28,7 @@ class Turno(models.Model):
     servicio = models.ForeignKey(
         Servicio, on_delete=models.CASCADE, related_name='turnos'
     )
-    estado = models.CharField(max_length=20, choices=ESTADOS, default=PENDIENTE)
+    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
 
     class Meta:
         constraints = [
