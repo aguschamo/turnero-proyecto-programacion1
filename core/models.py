@@ -1,46 +1,49 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Client(models.Model):
-    name = models.CharField("Nombre", max_length=100)
-    phone = models.CharField("Teléfono", max_length=20)
-    created_at = models.DateTimeField("Creado el", auto_now_add=True)
+class User(AbstractUser):
+    nombre = models.CharField(max_length=150, blank=True, default='')
 
     def __str__(self):
-        return f"{self.name} - {self.phone}"
+        return self.nombre
 
 
-class Service(models.Model):
-    name = models.CharField("Nombre", max_length=100)
-    price = models.DecimalField("Precio", max_digits=8, decimal_places=2)
-    duration_minutes = models.PositiveIntegerField("Duración (minutos)")
-    created_at = models.DateTimeField("Creado el", auto_now_add=True)
+class Servicio(models.Model):
+    nombre = models.CharField(max_length=100)
+    duracion = models.DurationField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} ({self.duration_minutes} min)"
+        return self.nombre
 
 
-class Appointment(models.Model):
-    date = models.DateField("Fecha")
-    time = models.TimeField("Hora")
-    client = models.ForeignKey(
-        Client,
-        on_delete=models.CASCADE,
-        related_name="appointments",
-        verbose_name="Cliente"
+class Turno(models.Model):
+    PENDIENTE = 'pendiente'
+    CONFIRMADO = 'confirmado'
+    CANCELADO = 'cancelado'
+    ESTADOS = [
+        (PENDIENTE, 'Pendiente'),
+        (CONFIRMADO, 'Confirmado'),
+        (CANCELADO, 'Cancelado'),
+    ]
+
+    fecha = models.DateField()
+    hora = models.TimeField()
+    usuario = models.ForeignKey(
+        'core.User', on_delete=models.CASCADE, related_name='turnos'
     )
-    service = models.ForeignKey(
-        Service,
-        on_delete=models.CASCADE,
-        related_name="appointments",
-        verbose_name="Servicio"
+    servicio = models.ForeignKey(
+        Servicio, on_delete=models.CASCADE, related_name='turnos'
     )
-    created_at = models.DateTimeField("Creado el", auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default=PENDIENTE)
 
     class Meta:
-        ordering = ["date", "time"]
-        verbose_name = "Turno"
-        verbose_name_plural = "Turnos"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['fecha', 'hora'], name='unique_fecha_hora'
+            )
+        ]
 
     def __str__(self):
-        return f"{self.date} {self.time} - {self.client.name} ({self.service.name})"
+        return f"{self.fecha} {self.hora} - {self.usuario}"

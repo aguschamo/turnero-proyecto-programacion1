@@ -1,19 +1,21 @@
 from rest_framework import serializers
-from .models import Client, Service, Appointment
 
-class ClientSerializer(serializers.ModelSerializer):
+from .models import Servicio, Turno, User
+
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Client
+        model = User
         fields = '__all__'
 
 
-class ServiceSerializer(serializers.ModelSerializer):
+class ServicioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Service
+        model = Servicio
         fields = '__all__'
 
 
-class AppointmentSerializer(serializers.ModelSerializer):
+class TurnoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Appointment
+        model = Turno
         fields = '__all__'
