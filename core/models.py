@@ -1,12 +1,5 @@
-from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from django.db import models
-
-
-class User(AbstractUser):
-    nombre = models.CharField(max_length=150, blank=True, default='')
-
-    def __str__(self):
-        return self.nombre
 
 
 class Servicio(models.Model):
@@ -31,7 +24,7 @@ class Turno(models.Model):
     fecha = models.DateField()
     hora = models.TimeField()
     usuario = models.ForeignKey(
-        'core.User', on_delete=models.CASCADE, related_name='turnos'
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='turnos'
     )
     servicio = models.ForeignKey(
         Servicio, on_delete=models.CASCADE, related_name='turnos'

@@ -1,12 +1,6 @@
 from rest_framework import serializers
 
-from .models import Servicio, Turno, User
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
+from .models import Servicio, Turno
 
 
 class ServicioSerializer(serializers.ModelSerializer):
@@ -19,3 +13,4 @@ class TurnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turno
         fields = '__all__'
+        read_only_fields = ('usuario',)
