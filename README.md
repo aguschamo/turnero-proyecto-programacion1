@@ -48,3 +48,15 @@ API para la gestion de turnos de una manicurista. Los usuarios pueden registrars
 - Un usuario debe estar registrado para poder reservar un turno
 - No pueden existir dos turnos en la misma fecha y hora
 - Cada turno debe estar asociado a un servicio valido
+
+## Configuracion local
+
+Copiar `.env.example` a `.env` y completar los datos de PostgreSQL locales:
+
+```env
+DB_NAME=programacion1_db
+DB_USER=postgres
+DB_PASSWORD=
+DB_HOST=localhost
+DB_PORT=5432
+```
