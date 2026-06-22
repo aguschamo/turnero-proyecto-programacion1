@@ -28,7 +28,9 @@ class TurnoViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_staff or user.role == 'ADMIN':
             return Turno.objects.all()
-        return Turno.objects.filter(usuario=user)
+        if user.role == 'CLIENTE':
+            return Turno.objects.filter(usuario=user)
+        return Turno.objects.none()
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
