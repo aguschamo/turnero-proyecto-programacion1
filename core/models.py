@@ -9,9 +9,10 @@ class Servicio(models.Model):
     nombre = models.CharField(max_length=100)
     duracion = models.DurationField(validators=[MinValueValidator(timedelta(minutes=1))])
     precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} {'(Inactivo)' if not self.is_active else ''}"
 
 
 class Turno(models.Model):
@@ -26,7 +27,7 @@ class Turno(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='turnos'
     )
     servicio = models.ForeignKey(
-        Servicio, on_delete=models.CASCADE, related_name='turnos'
+        Servicio, on_delete=models.SET_NULL, null=True, related_name='turnos'
     )
     estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.PENDIENTE)
 

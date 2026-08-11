@@ -3,12 +3,26 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Servicio, Turno
 from .permissions import IsAdminOrVendedor, IsOwnerOrAdmin
-from .serializers import ServicioSerializer, TurnoSerializer
+from .serializers import ServicioPublicoSerializer, ServicioSerializer, TurnoSerializer
+
+
+def is_admin(user):
+    return user.is_staff or getattr(user, 'role', None) == 'ADMIN'
 
 
 class ServicioViewSet(viewsets.ModelViewSet):
-    queryset = Servicio.objects.all()
-    serializer_class = ServicioSerializer
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated and is_admin(user):
+            return Servicio.objects.all()
+        return Servicio.objects.filter(is_active=True)
+
+    def get_serializer_class(self):
+        user = self.request.user
+        is_safe = self.request.method in ('GET', 'HEAD', 'OPTIONS')
+        if is_safe and not (user.is_authenticated and is_admin(user)):
+            return ServicioPublicoSerializer
+        return ServicioSerializer
 
     def get_permissions(self):
         if self.request.method in ('GET', 'HEAD', 'OPTIONS'):
@@ -26,9 +40,9 @@ class TurnoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.role == 'ADMIN':
+        if is_admin(user):
             return Turno.objects.all()
-        if user.role == 'CLIENTE':
+        if getattr(user, 'role', None) == 'CLIENTE':
             return Turno.objects.filter(usuario=user)
         return Turno.objects.none()
 
