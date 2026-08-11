@@ -65,4 +65,4 @@ DB_PORT=5432
 
 El siguiente diagrama representa el bosquejo inicial de la Home y la estructura general de componentes de la aplicación React.
 
-**Diagrama de diseño:** [Ver diagrama en Google Drive] https://drive.google.com/drive/my-drive?hl=es-419
+**Diagrama de diseño:** [Ver diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
