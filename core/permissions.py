@@ -10,7 +10,9 @@ class IsAdminOrVendedor(BasePermission):
 
 class IsOwnerOrAdmin(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return request.user.is_staff or obj.usuario == request.user
+        # Unificamos el criterio de Admin: staff de Django o rol ADMIN del sistema
+        is_admin = request.user.is_staff or getattr(request.user, 'role', None) == 'ADMIN'
+        return is_admin or obj.usuario == request.user
 
 
 class ReadOnly(BasePermission):

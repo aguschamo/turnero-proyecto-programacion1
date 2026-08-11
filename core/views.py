@@ -7,7 +7,12 @@ from .serializers import ServicioSerializer, TurnoSerializer
 
 
 class ServicioViewSet(viewsets.ModelViewSet):
-    queryset = Servicio.objects.all()
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated and (user.is_staff or user.role == 'ADMIN'):
+            return Servicio.objects.all()
+        return Servicio.objects.filter(is_active=True)
+
     serializer_class = ServicioSerializer
 
     def get_permissions(self):
