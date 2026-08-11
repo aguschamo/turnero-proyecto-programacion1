@@ -60,3 +60,9 @@ DB_PASSWORD=
 DB_HOST=localhost
 DB_PORT=5432
 ```
+
+## Diseño inicial
+
+El siguiente diagrama representa el bosquejo inicial de la Home y la estructura general de componentes de la aplicación React.
+
+**Diagrama de diseño:** [Ver diagrama en Google Drive] https://drive.google.com/drive/my-drive?hl=es-419
