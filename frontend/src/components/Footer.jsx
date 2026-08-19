@@ -1,12 +1,14 @@
+import { Link } from 'react-router-dom'
+
 function Footer() {
   return (
     <footer className="hn-footer py-5 mt-auto">
       <div className="container">
         <div className="row g-4 text-center text-md-start align-items-center">
           <div className="col-12 col-md-4">
-            <a href="#inicio" className="font-gothic text-white fs-1 text-decoration-none d-block mb-1">
+            <Link to="/" className="font-gothic text-white fs-1 text-decoration-none d-block mb-1">
               holy nails ✨
-            </a>
+            </Link>
             <p className="text-secondary small mb-0">
               Estética cute & dark. Manicura y Nail Art exclusivo.
             </p>
@@ -15,16 +17,16 @@ function Footer() {
           <div className="col-12 col-md-4 text-center">
             <ul className="list-inline mb-2">
               <li className="list-inline-item mx-2">
-                <a href="#inicio" className="small fw-semibold">INICIO</a>
+                <Link to="/" className="small fw-semibold">INICIO</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <a href="#servicios" className="small fw-semibold">SERVICIOS</a>
+                <Link to="/#servicios" className="small fw-semibold">SERVICIOS</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <a href="#galeria" className="small fw-semibold">GALERÍA</a>
+                <Link to="/#galeria" className="small fw-semibold">GALERÍA</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <a href="#contacto" className="small fw-semibold">CONTACTO</a>
+                <Link to="/#contacto" className="small fw-semibold">CONTACTO</Link>
               </li>
             </ul>
             <p className="text-secondary small mb-0">

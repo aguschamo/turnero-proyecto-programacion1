@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
+import Avatar from './Avatar.jsx'
 
 function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false)
-  const { usuario, logout } = useAuth()
+  const { usuario, role, logout } = useAuth()
   const navigate = useNavigate()
 
   function cerrarMenu() {
@@ -17,12 +18,68 @@ function Navbar() {
     navigate('/login', { replace: true })
   }
 
+  const enlaces = (
+    <ul className="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
+      <li className="nav-item">
+        <Link className="nav-link hn-nav-link" to="/" onClick={cerrarMenu}>
+          INICIO
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={cerrarMenu}>
+          SERVICIOS
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={cerrarMenu}>
+          GALERÍA
+        </Link>
+      </li>
+      <li className="nav-item">
+        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={cerrarMenu}>
+          CONTACTO
+        </Link>
+      </li>
+
+      {usuario && role === 'cliente' && (
+        <>
+          <li className="nav-item">
+            <Link className="nav-link hn-nav-link" to="/agendar" onClick={cerrarMenu}>
+              AGENDAR
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link hn-nav-link" to="/mis-turnos" onClick={cerrarMenu}>
+              MIS TURNOS
+            </Link>
+          </li>
+        </>
+      )}
+
+      {usuario && role === 'admin' && (
+        <li className="nav-item">
+          <Link className="nav-link hn-nav-link" to="/admin" onClick={cerrarMenu}>
+            PANEL ADMIN
+          </Link>
+        </li>
+      )}
+
+      {usuario && (
+        <li className="nav-item">
+          <Link className="nav-link hn-nav-link" to="/perfil" onClick={cerrarMenu}>
+            PERFIL
+          </Link>
+        </li>
+      )}
+    </ul>
+  )
+
   return (
     <nav className="navbar navbar-expand-lg sticky-top hn-navbar">
       <div className="container">
-        <a className="navbar-brand hn-brand" href="#inicio" onClick={cerrarMenu}>
+        <Link className="navbar-brand hn-brand" to="/" onClick={cerrarMenu}>
           holy nails ✨
-        </a>
+        </Link>
 
         <button
           className="navbar-toggler border-0"
@@ -36,33 +93,15 @@ function Navbar() {
         </button>
 
         <div className={`collapse navbar-collapse${menuAbierto ? ' show' : ''}`} id="hnNavbarMenu">
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
-            <li className="nav-item">
-              <a className="nav-link hn-nav-link" href="#inicio" onClick={cerrarMenu}>
-                INICIO
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link hn-nav-link" href="#servicios" onClick={cerrarMenu}>
-                SERVICIOS
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link hn-nav-link" href="#galeria" onClick={cerrarMenu}>
-                GALERÍA
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link hn-nav-link" href="#contacto" onClick={cerrarMenu}>
-                CONTACTO
-              </a>
-            </li>
-          </ul>
+          {enlaces}
 
-          <div className="d-flex align-items-center justify-content-center mt-2 mt-lg-0">
+          <div className="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
             {usuario ? (
-              <div className="d-flex flex-wrap align-items-center justify-content-center gap-2">
-                <span className="small text-white opacity-75">👤 {usuario.nombre}</span>
+              <>
+                <span className="small text-dark d-flex align-items-center gap-2">
+                  <Avatar nombre={usuario.nombre} photo={usuario.photo} size="sm" />
+                  {usuario.nombre}
+                </span>
                 <button
                   type="button"
                   className="btn btn-hn-pink rounded-pill fw-bold"
@@ -70,11 +109,19 @@ function Navbar() {
                 >
                   CERRAR SESIÓN ⏻
                 </button>
-              </div>
+              </>
             ) : (
-              <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold" onClick={cerrarMenu}>
-                INICIAR SESIÓN 👤
-              </Link>
+              <>
+                <Link to="/agendar" className="btn btn-hn-dark rounded-pill fw-bold" onClick={cerrarMenu}>
+                  AGENDAR TURNO ✨
+                </Link>
+                <Link to="/register" className="btn btn-hn-outline rounded-pill fw-bold" onClick={cerrarMenu}>
+                  REGISTRARTE
+                </Link>
+                <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold" onClick={cerrarMenu}>
+                  INICIAR SESIÓN 👤
+                </Link>
+              </>
             )}
           </div>
         </div>
