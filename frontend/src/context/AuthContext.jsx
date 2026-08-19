@@ -3,8 +3,27 @@ import { createContext, useContext, useState } from 'react'
 const AuthContext = createContext(null)
 
 const USUARIOS_INICIALES = [
-  { id: 1, nombre: 'Manicurista Demo', email: 'demo@holynails.com', password: '123456' },
+  {
+    id: 1,
+    nombre: 'Cliente Demo',
+    email: 'cliente@holynails.com',
+    password: '1234',
+    role: 'cliente',
+    photo: null,
+  },
+  {
+    id: 2,
+    nombre: 'Admin Holy Nails',
+    email: 'admin@holynails.com',
+    password: '1234',
+    role: 'admin',
+    photo: null,
+  },
 ]
+
+function modeloUsuario({ id, nombre, email, role, photo }) {
+  return { id, nombre, email, role, photo }
+}
 
 export function AuthProvider({ children }) {
   const [usuarios, setUsuarios] = useState(USUARIOS_INICIALES)
@@ -15,20 +34,23 @@ export function AuthProvider({ children }) {
       (u) =>
         u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password,
     )
-    if (!encontrado) return false
-    setUsuario({ id: encontrado.id, nombre: encontrado.nombre, email: encontrado.email })
-    return true
+    if (!encontrado) return null
+    const sesion = modeloUsuario(encontrado)
+    setUsuario(sesion)
+    return sesion
   }
 
-  function register(nombre, email, password) {
+  function register(email, password) {
     if (usuarios.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())) {
       return false
     }
     const nuevo = {
       id: usuarios.length + 1,
-      nombre: nombre.trim(),
-      email: email.trim(),
+      nombre: null,
+      email: email.trim().toLowerCase(),
       password,
+      role: 'cliente',
+      photo: null,
     }
     setUsuarios((prev) => [...prev, nuevo])
     return true
@@ -40,10 +62,11 @@ export function AuthProvider({ children }) {
 
   const value = {
     usuario,
+    role: usuario ? usuario.role : null,
+    isAuthenticated: Boolean(usuario),
     login,
     register,
     logout,
-    isAuthenticated: Boolean(usuario),
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

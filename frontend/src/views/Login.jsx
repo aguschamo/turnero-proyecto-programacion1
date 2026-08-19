@@ -3,25 +3,39 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
 
+const RUTAS_CLIENTE = ['/agendar', '/mis-turnos', '/perfil']
+
 function Login() {
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, role } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
+  const from = location.state?.from?.pathname
+  const registroOk = Boolean(location.state?.registroOk)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) {
+    return <Navigate to={role === 'admin' ? '/admin' : '/perfil'} replace />
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (!login(email, password)) {
+    const sesion = login(email, password)
+    if (!sesion) {
       setError('Credenciales incorrectas. Verificá tu correo y contraseña.')
       return
     }
-    navigate(from, { replace: true })
+
+    const destino =
+      sesion.role === 'admin'
+        ? '/admin'
+        : RUTAS_CLIENTE.includes(from)
+          ? from
+          : '/perfil'
+
+    navigate(destino, { replace: true })
   }
 
   return (
@@ -35,8 +49,14 @@ function Login() {
                   holy nails ✨
                 </h1>
                 <p className="text-center text-muted small mb-4">
-                  Iniciá sesión para reservar tu turno
+                  Iniciá sesión para reservar tus turnos
                 </p>
+
+                {registroOk && (
+                  <div className="alert alert-success py-2 small" role="alert">
+                    ¡Cuenta creada! Ya podés iniciar sesión.
+                  </div>
+                )}
 
                 {error && (
                   <div className="alert alert-danger py-2 small" role="alert">
@@ -88,9 +108,16 @@ function Login() {
                     Registrate
                   </Link>
                 </p>
-                <p className="small text-center text-muted mt-3 mb-0">
-                  Demo: <code>demo@holynails.com</code> / <code>123456</code>
-                </p>
+
+                <div className="small text-center text-muted mt-4 pt-3 border-top">
+                  <p className="mb-1">Usuarios de prueba:</p>
+                  <p className="mb-0">
+                    Cliente: <code>cliente@holynails.com</code> /{' '}
+                    <code>1234</code>
+                    <br />
+                    Admin: <code>admin@holynails.com</code> / <code>1234</code>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

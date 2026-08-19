@@ -7,13 +7,14 @@ function Register() {
   const { register, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
-  const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmar, setConfirmar] = useState('')
   const [error, setError] = useState('')
 
-  if (isAuthenticated) return <Navigate to="/" replace />
+  if (isAuthenticated) {
+    return <Navigate to="/perfil" replace />
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -21,11 +22,11 @@ function Register() {
       setError('Las contraseñas no coinciden.')
       return
     }
-    if (!register(nombre, email, password)) {
-      setError('Ya existe un/a usuario/a con ese correo.')
+    if (!register(email, password)) {
+      setError('Ya existe una cuenta con ese correo.')
       return
     }
-    navigate('/login', { replace: true })
+    navigate('/login', { replace: true, state: { registroOk: true } })
   }
 
   return (
@@ -39,7 +40,7 @@ function Register() {
                   holy nails ✨
                 </h1>
                 <p className="text-center text-muted small mb-4">
-                  Creá tu cuenta para reservar turnos
+                  Creá tu cuenta de clienta para reservar turnos
                 </p>
 
                 {error && (
@@ -49,22 +50,6 @@ function Register() {
                 )}
 
                 <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label htmlFor="registerNombre" className="form-label">
-                      Nombre y apellido
-                    </label>
-                    <input
-                      id="registerNombre"
-                      type="text"
-                      className="form-control"
-                      placeholder="Nombre Apellido"
-                      value={nombre}
-                      onChange={(e) => setNombre(e.target.value)}
-                      required
-                      autoComplete="name"
-                    />
-                  </div>
-
                   <div className="mb-3">
                     <label htmlFor="registerEmail" className="form-label">
                       Correo electrónico
@@ -93,7 +78,7 @@ function Register() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      minLength={6}
+                      minLength={4}
                       autoComplete="new-password"
                     />
                   </div>
@@ -110,7 +95,7 @@ function Register() {
                       value={confirmar}
                       onChange={(e) => setConfirmar(e.target.value)}
                       required
-                      minLength={6}
+                      minLength={4}
                       autoComplete="new-password"
                     />
                   </div>
