@@ -1,4 +1,16 @@
+import { Link, useNavigate } from 'react-router-dom'
+
+import { useAuth } from '../context/AuthContext.jsx'
+
 function Navbar() {
+  const { usuario, logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <nav className="navbar navbar-expand-lg sticky-top hn-navbar">
       <div className="container">
@@ -43,9 +55,22 @@ function Navbar() {
           </ul>
 
           <div className="d-flex align-items-center justify-content-center mt-2 mt-lg-0">
-            <a href="#contacto" className="btn btn-hn-pink rounded-pill fw-bold">
-              INICIAR SESIÓN 👤
-            </a>
+            {usuario ? (
+              <div className="d-flex flex-wrap align-items-center justify-content-center gap-2">
+                <span className="small text-white opacity-75">👤 {usuario.nombre}</span>
+                <button
+                  type="button"
+                  className="btn btn-hn-pink rounded-pill fw-bold"
+                  onClick={handleLogout}
+                >
+                  CERRAR SESIÓN ⏻
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold">
+                INICIAR SESIÓN 👤
+              </Link>
+            )}
           </div>
         </div>
       </div>
