@@ -157,6 +157,33 @@ body {
   display: inline-block;
 }
 
+/* Avatar de usuario */
+.hn-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--hn-pink-light) 0%, var(--hn-pink-mid) 100%);
+  color: var(--hn-dark);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--hn-white-warm);
+}
+
+.hn-avatar-sm {
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.8rem;
+}
+
+.hn-avatar-lg {
+  width: 6rem;
+  height: 6rem;
+  font-size: 2.4rem;
+}
+
 /* Hero */
 .hn-hero-section {
   background: linear-gradient(180deg, var(--hn-pink-light) 0%, var(--hn-white-warm) 100%);

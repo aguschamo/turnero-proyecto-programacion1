@@ -1,5 +1,4 @@
-import Navbar from '../components/Navbar.jsx'
-import Footer from '../components/Footer.jsx'
+import { Link } from 'react-router-dom'
 import heroImg from '../assets/hero.jpg'
 
 import semiIcon from '../assets/icons/semi.jpg'
@@ -49,8 +48,6 @@ const trabajosGaleria = [
 function Home() {
   return (
     <>
-      <Navbar />
-
       {/* HERO SECTION */}
       <header id="inicio" className="hn-hero-section">
         <div className="container">
@@ -68,9 +65,9 @@ function Home() {
                 Diseños únicos, calidad y detalles para que tus uñas hablen por vos.
               </p>
               <div className="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-                <a href="#servicios" className="btn btn-hn-dark">
+                <Link to="/agendar" className="btn btn-hn-dark">
                   RESERVAR TURNO ✨
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -233,14 +230,12 @@ function Home() {
             <p className="text-muted mb-4">
               Reservá tu turno de forma rápida y sencilla.
             </p>
-            <a href="#contacto" className="btn btn-hn-dark">
+            <Link to="/agendar" className="btn btn-hn-dark">
               RESERVAR TURNO ✨
-            </a>
+            </Link>
           </div>
         </div>
       </section>
-
-      <Footer />
     </>
   )
 }
