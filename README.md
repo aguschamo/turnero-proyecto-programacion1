@@ -1,68 +1,329 @@
-# TP 1 - Programacion 1
+# 💅 Holy Nails
 
-## Sistema de Turnos para Manicurista
+<p align="center">
+  <strong>Sistema Web de Gestión de Turnos para Salón de Manicuría & Nail Art</strong>
+</p>
 
-API para la gestion de turnos de una manicurista. Los usuarios pueden registrarse, iniciar sesion y reservar turnos para distintos servicios.
+<p align="center">
+  <img src="https://img.shields.io/badge/Estado-En_Desarrollo-ff69b4?style=for-the-badge&logo=git&logoColor=white" alt="Estado del Proyecto" />
+  <img src="https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django" />
+  <img src="https://img.shields.io/badge/DRF-3.17-red?style=for-the-badge&logo=django&logoColor=white" alt="Django REST Framework" />
+  <img src="https://img.shields.io/badge/SimpleJWT-5.5-black?style=for-the-badge&logo=json-web-tokens&logoColor=white" alt="JWT" />
+  <img src="https://img.shields.io/badge/PostgreSQL-15%2B-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-8.0-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap" />
+  <img src="https://img.shields.io/badge/Swagger-OpenAPI_3.0-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger" />
+</p>
 
-## Modelo de datos
+---
 
-### Entidades
+> 🚧 **Proyecto en desarrollo**
+>
+> **Holy Nails** se encuentra actualmente en proceso de desarrollo activo. La API REST backend está implementada y funcional, y la interfaz gráfica frontend (React) está construida y maquetada por fases. Algunas características y la integración entre frontend y backend se completarán progresivamente.
 
-#### Usuario
+---
 
-| Campo | Descripcion |
-| --- | --- |
-| id_usuario (PK) | Identificador del usuario |
-| nombre | Nombre y apellido |
-| email | Email unico |
-| contrasena | Contrasena del usuario |
+## 📸 Muestra Visual / Preview
 
-#### Servicio
+<p align="center">
+  <img src="./frontend/src/assets/hero.jpg" alt="Holy Nails Hero Preview" width="800" style="border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);" />
+</p>
 
-| Campo | Descripcion |
-| --- | --- |
-| id_servicio (PK) | Identificador del servicio |
-| nombre | Nombre del servicio |
-| duracion | Duracion del servicio |
-| precio | Precio del servicio |
+<p align="center">
+  <em>Estética visual inspirada en un estilo moderno, femenino, cute y dark / gothic chic.</em>
+</p>
 
-#### Turno
+> 💡 *Nota: Las capturas finales de interacción en tiempo real se actualizarán al culminar la etapa de integración frontend-backend.*
 
-| Campo | Descripcion |
-| --- | --- |
-| id_turno (PK) | Identificador del turno |
-| fecha | Fecha del turno |
-| hora | Hora del turno |
-| id_usuario (FK) | Usuario que reserva el turno |
-| id_servicio (FK) | Servicio asociado al turno |
-| estado | `pendiente` / `confirmado` / `cancelado` |
+---
 
-### Relaciones
+## 📌 Sobre el proyecto
 
-- Un `Usuario` puede tener multiples `Turnos` (1:N)
-- Un `Servicio` puede estar asociado a multiples `Turnos` (1:N)
-- Cada `Turno` pertenece a un unico `Usuario` y a un unico `Servicio`
+**Holy Nails** es una plataforma web integral orientada a la gestión eficiente de agendamiento de turnos para un estudio o salón de manicuría.
 
-## Reglas del sistema
+### 🎯 Problema que busca resolver
+El agendamiento informal a través de mensajes de texto genera inconvenientes frecuentes: solapamiento de turnos, falta de información sobre la duración o precios de los servicios (Semipermanente, Kapping, Esculpidas), y pérdida de tiempo organizativo tanto para la manicurista como para sus clientas.
 
-- Un usuario debe estar registrado para poder reservar un turno
-- No pueden existir dos turnos en la misma fecha y hora
-- Cada turno debe estar asociado a un servicio valido
+### 💡 Solución propuesta
+Holy Nails automatiza y centraliza la reserva de citas en línea:
+- **Para las clientas**: Permite explorar el catálogo de servicios, conocer precios/duraciones y solicitar turnos disponibles en horarios comerciales definidos.
+- **Para la administración**: Facilita el control de la agenda, la actualización del catálogo de servicios y la administración de los estados de cada turno (`pendiente`, `confirmado`, `cancelado`).
 
-## Configuracion local
+---
 
-Copiar `.env.example` a `.env` y completar los datos de PostgreSQL locales:
+## 🚧 Estado del proyecto
 
-```env
-DB_NAME=programacion1_db
-DB_USER=postgres
-DB_PASSWORD=
-DB_HOST=localhost
-DB_PORT=5432
+En la siguiente tabla se detalla el estado actual de cada componente del sistema:
+
+| Estado | Módulo / Funcionalidad | Descripción |
+| :---: | --- | --- |
+| ✅ | **API REST (Django + DRF)** | Arquitectura backend estructurada con endpoints RESTful para autenticación, usuarios, servicios y turnos. |
+| ✅ | **Autenticación JWT** | Autenticación segura mediante JSON Web Tokens (`SimpleJWT`) con renovación automática de tokens. |
+| ✅ | **Modelo de Datos y Validaciones** | Restricción de turnos duplicados en misma fecha/hora, horario de atención (09:00 a 20:00 hs) y validación de fechas pasadas. |
+| ✅ | **Control de Permisos por Roles** | Permisos personalizados en API (`IsAuthenticated`, `IsAdminOrVendedor`, `IsOwnerOrAdmin`) según el rol del usuario. |
+| ✅ | **Documentación OpenAPI 3 / Swagger** | Documentación interactiva de la API accesible públicamente mediante Swagger UI (`drf-spectacular`). |
+| ✅ | **Interfaz de Usuario Frontend (React)** | Vistas principales desarrolladas y maquetadas con Bootstrap: Home, Galería, Agendar, Mis Turnos, Perfil y Panel Admin. |
+| ✅ | **Protección de Rutas en Frontend** | Enrutamiento protegido por autenticación y roles mediante componentes `ProtectedRoute` y `RoleRoute`. |
+| 🚧 | **Conexión Frontend ↔ Backend** | Las pantallas del cliente y admin en React actualmente operan con estado local/mock (`AuthContext`) listas para integrarse con la API REST. |
+| 🚧 | **Selección Dinámica de Horarios** | Desplegable de franjas horarias disponibles según la duración del servicio seleccionado y turnos ocupados. |
+| 📋 | **Notificaciones Automáticas** | Confirmaciones y recordatorios de turnos vía email o WhatsApp. |
+| 📋 | **Historial y Reportes de Gestión** | Indicadores administrativos sobre los servicios más solicitados e historial de atenciones por cliente. |
+
+---
+
+## ✨ Funcionalidades
+
+### 🔐 Autenticación y Cuentas
+- [x] Registro de usuarias/os con asignación automática del rol `CLIENTE`.
+- [x] Inicio de sesión y generación de tokens JWT de acceso y refresco.
+- [x] Consulta y actualización del perfil de usuario (`/api/auth/profile/`).
+
+### 💅 Gestión de Servicios (Catálogo)
+- [x] Consulta pública de servicios activos (nombre, duración, precio).
+- [x] Gestión administrativa (alta, baja lógica y modificación) reservada a roles con permisos de administración o ventas.
+
+### 📅 Gestión de Turnos
+- [x] Reserva de turnos asociada a un servicio válido y fecha/hora elegida.
+- [x] Validación automática en backend:
+  - No permite reservar en fechas pasadas.
+  - No permite reservar fuera del rango de atención (09:00 a 20:00 hs).
+  - Impide el solapamiento de dos turnos en la misma fecha y hora (`UniqueConstraint`).
+- [x] Gestión de estados del turno: `pendiente`, `confirmado` y `cancelado`.
+- [x] Filtro de visibilidad: Las clientas solo pueden consultar y gestionar **sus propios turnos**, mientras que el administrador tiene acceso a la agenda completa.
+
+---
+
+## 👥 Roles y permisos
+
+El sistema contempla la siguiente distinción de roles tanto en backend como en frontend:
+
+| Rol | Ámbito | Descripción y Permisos |
+| --- | --- | --- |
+| **`CLIENTE`** | App / Frontend / API | Rol por defecto asignado al registrarse. Puede explorar servicios activos, crear reservas de turnos y ver/gestionar únicamente sus propios turnos. |
+| **`ADMIN`** | App / Frontend / API | Administrador de la aplicación. Puede gestionar el catálogo de servicios completo, visualizar todos los turnos del salón, cambiar estados de reservas y acceder al panel `/admin` en el frontend. |
+| **`VENDEDOR`** | API Backend | Rol intermedio habilitado en el backend (`IsAdminOrVendedor`) para gestionar y actualizar el catálogo de servicios ofrecidos. |
+| **`Django Staff`** | Panel Admin Django | Superusuario o staff de Django con acceso al panel nativo de administración (`/admin/`) y permisos administrativos automáticos en la API REST. |
+
+---
+
+## 🛠️ Tecnologías utilizadas
+
+| Tecnología | Categoría | Propósito en el Proyecto |
+| --- | --- | --- |
+| **Python 3.13** | Lenguaje | Lenguaje principal del servidor backend |
+| **Django 6.0** | Framework Backend | Estructura web, ORM y panel de administración |
+| **Django REST Framework 3.17** | API REST | Construcción de endpoints, serializadores y vistas |
+| **SimpleJWT 5.5** | Autenticación | Manejo de autenticación por JSON Web Tokens |
+| **drf-spectacular 0.29** | Documentación | Generación de especificación OpenAPI 3 y Swagger UI |
+| **PostgreSQL / psycopg 3** | Base de Datos | Base de datos relacional para entornos de desarrollo y producción |
+| **React 19** | Biblioteca Frontend | Creación de componentes e interfaz de usuario SPA |
+| **Vite 8** | Build Tool / Bundler | Entorno de desarrollo rápido y empaquetador para React |
+| **Bootstrap 5.3** | Framework CSS | Maquetado responsive, grillas y componentes de diseño |
+| **React Router DOM 7** | Navegación | Gestión de rutas, navegación SPA y guards de autorización |
+
+---
+
+## 📊 Modelo de Datos
+
+### Entidades Principales
+
+#### 👤 Usuario (`users.User`)
+*Extiende `AbstractUser` de Django*
+- `id`: Identificador único (PK).
+- `username`: Nombre de usuario único.
+- `email`: Correo electrónico único.
+- `nombre`: Nombre y apellido del usuario.
+- `role`: Rol del sistema (`CLIENTE`, `ADMIN`, `VENDEDOR`).
+
+#### 💅 Servicio (`core.Servicio`)
+- `id`: Identificador del servicio (PK).
+- `nombre`: Nombre del servicio (ej. Semipermanente, Kapping, Esculpidas).
+- `duracion`: Duración estimada (`DurationField` >= 1 min).
+- `precio`: Precio en pesos (`DecimalField` >= 0).
+- `is_active`: Estado de visibilidad (Baja lógica).
+
+#### 📅 Turno (`core.Turno`)
+- `id`: Identificador del turno (PK).
+- `fecha`: Fecha de la cita (`DateField`).
+- `hora`: Hora de la cita (`TimeField`, entre 09:00 y 20:00 hs).
+- `usuario`: Clave foránea referenciando a `User`.
+- `servicio`: Clave foránea referenciando a `Servicio` (SET_NULL al eliminar).
+- `estado`: Estado de la reserva (`pendiente`, `confirmado`, `cancelado`).
+
+### Reglas de Negocio
+1. Un usuario debe autenticarse para reservar un turno.
+2. **Restricción de Unicidad**: No pueden existir dos turnos registrados con la misma fecha y hora (`UniqueConstraint(fields=['fecha', 'hora'])`).
+3. La fecha de reserva no puede ser anterior a la fecha actual.
+4. Las reservas solo se permiten en la franja horaria de 09:00 a 20:00 hs.
+
+---
+
+## 📁 Estructura del proyecto
+
+```text
+Programacion1/
+├── config/                      # Configuración principal del proyecto Django
+│   ├── settings.py              # Ajustes de Django (Apps, DB, SimpleJWT, CORS)
+│   ├── urls.py                  # Enrutador principal y Swagger UI
+│   ├── wsgi.py                  # Punto de entrada WSGI
+│   └── asgi.py                  # Punto de entrada ASGI
+├── core/                        # Aplicación principal de la lógica de negocio
+│   ├── models.py                # Modelos de Servicio y Turno
+│   ├── serializers.py           # Serializadores y validaciones de turnos/servicios
+│   ├── views.py                 # ServicioViewSet y TurnoViewSet
+│   ├── permissions.py           # Clases de permisos personalizados
+│   └── urls.py                  # Enrutamiento API para servicios y turnos
+├── users/                       # Aplicación de usuarios y autenticación
+│   ├── models.py                # Modelo User personalizado con Roles
+│   ├── serializers.py           # Serializadores de Registro y Perfil
+│   ├── views.py                 # RegisterView, ProfileView y UserViewSet
+│   └── urls.py                  # Rutas para /api/auth/ (login, register, profile)
+├── frontend/                    # Aplicación cliente React + Vite
+│   ├── src/
+│   │   ├── assets/              # Imágenes de hero, catálogo y galería de trabajos
+│   │   ├── components/          # Layout, Navbar, Footer, ProtectedRoute, RoleRoute
+│   │   ├── context/             # AuthContext (Gestión de sesión de usuario)
+│   │   └── views/               # Vistas: Home, Login, Register, Agendar, MisTurnos, Admin
+│   ├── index.html               # Archivo HTML principal
+│   ├── package.json             # Dependencias y scripts de frontend
+│   └── vite.config.js           # Configuración del servidor de desarrollo Vite
+├── manage.py                    # Script de administración de Django
+├── requirements.txt             # Lista de dependencias Python
+├── .env.example                 # Plantilla de variables de entorno para la base de datos
+└── README.md                    # Documentación general del repositorio
 ```
 
-## Diseño inicial
+---
 
-El siguiente diagrama representa el bosquejo inicial de la Home y la estructura general de componentes de la aplicación React.
+## ⚙️ Instalación y Configuración
 
-**Diagrama de diseño:** [Ver diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
+Siga las siguientes instrucciones para clonar y ejecutar el proyecto localmente.
+
+### Prerrequisitos
+- **Python** 3.10 o superior.
+- **Node.js** v18 o superior y **npm**.
+- Servidor **PostgreSQL** en ejecución local o remota.
+
+---
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/tu-usuario/Programacion1.git
+cd Programacion1
+```
+
+---
+
+### 2. Configuración del Backend (Django)
+
+1. **Crear y activar un entorno virtual**:
+   - *En Windows (PowerShell)*:
+     ```powershell
+     python -m venv venv
+     .\venv\Scripts\activate
+     ```
+   - *En Linux / macOS*:
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+
+2. **Instalar dependencias del backend**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configurar variables de entorno**:
+   Copiar el archivo de plantilla `.env.example` a un nuevo archivo `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   Editar `.env` e ingresar las credenciales de PostgreSQL de su entorno local:
+   ```env
+   DB_NAME=programacion1_db
+   DB_USER=postgres
+   DB_PASSWORD=tu_contraseña_postgres
+   DB_HOST=localhost
+   DB_PORT=5432
+   ```
+
+4. **Crear la base de datos en PostgreSQL**:
+   Asegúrese de crear la base de datos `programacion1_db` en su servidor de PostgreSQL antes de continuar.
+
+5. **Ejecutar migraciones**:
+   ```bash
+   python manage.py migrate
+   ```
+
+6. **Crear superusuario (Administrador)**:
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+---
+
+### 3. Configuración del Frontend (React + Vite)
+
+1. NAVEGAR a la carpeta `frontend`:
+   ```bash
+   cd frontend
+   ```
+
+2. Instalar las dependencias de Node:
+   ```bash
+   npm install
+   ```
+
+---
+
+## ▶️ Ejecución
+
+Para ejecutar la aplicación completa en entorno de desarrollo:
+
+### 🐍 Iniciar Servidor Backend (Django)
+Desde la raíz del proyecto (con el entorno virtual activado):
+```bash
+python manage.py runserver
+```
+- **Servidor API**: `http://127.0.0.1:8000/`
+- **Documentación Swagger UI**: `http://127.0.0.1:8000/api/docs/`
+- **Esquema OpenAPI (JSON)**: `http://127.0.0.1:8000/api/schema/`
+- **Panel Administrador Django**: `http://127.0.0.1:8000/admin/`
+
+### ⚡ Iniciar Servidor Frontend (React)
+Desde el directorio `frontend/`:
+```bash
+npm run dev
+```
+- **Aplicación Web**: `http://localhost:5173/` (o `http://localhost:3000/`)
+
+---
+
+## 🗺️ Próximos pasos
+
+- [ ] **Integración de API REST con Frontend**: Conectar los formularios de reserva (`Agendar.jsx`) y la vista de turnos (`MisTurnos.jsx`) a la API de Django mediante peticiones HTTP (Axios / Fetch) con tokens JWT.
+- [ ] **Persistencia de Sesión JWT**: Almacenar y renovar de forma segura el token JWT en el cliente frontend.
+- [ ] **Panel de Administración interactivo en React**: Permitir la cancelación/confirmación de turnos y la gestión dinámica del catálogo de servicios desde la vista `/admin`.
+- [ ] **Selector dinámico de turnos**: Filtrar las horas disponibles en tiempo real según la duración del servicio seleccionado.
+- [ ] **Despliegue (Deploy)**: Configuración de servidor de producción para backend y hosting frontend.
+
+---
+
+## 🎨 Diagrama de Diseño Inicial
+
+El esquema inicial de la interfaz y estructura general de la aplicación se encuentra disponible en:
+- **Diagrama de diseño inicial**: [Ver diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
+
+---
+
+## 🎓 Contexto académico
+
+Este proyecto se desarrolla como trabajo práctico integrador para la materia **Programación 1** de la carrera de **Ingeniería en Informática** de la **Universidad de Mendoza**.
+
+---
+
+## 👩‍💻 Autora
+
+**Agustina Chamorro**  
+Estudiante de Ingeniería en Informática — *Universidad de Mendoza*
