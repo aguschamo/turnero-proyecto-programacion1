@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
   const [usuarios, setUsuarios] = useState(USUARIOS_INICIALES)
   const [usuario, setUsuario] = useState(null)
 
-  function login(email, password) {
+  const login = useCallback((email, password) => {
     const encontrado = usuarios.find(
       (u) =>
         u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password,
@@ -38,15 +38,15 @@ export function AuthProvider({ children }) {
     const sesion = modeloUsuario(encontrado)
     setUsuario(sesion)
     return sesion
-  }
+  }, [usuarios])
 
-  function register(email, password) {
+  const register = useCallback((nombre, email, password) => {
     if (usuarios.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())) {
       return false
     }
     const nuevo = {
       id: usuarios.length + 1,
-      nombre: null,
+      nombre: nombre.trim() || null,
       email: email.trim().toLowerCase(),
       password,
       role: 'cliente',
@@ -54,20 +54,20 @@ export function AuthProvider({ children }) {
     }
     setUsuarios((prev) => [...prev, nuevo])
     return true
-  }
+  }, [usuarios])
 
-  function logout() {
+  const logout = useCallback(() => {
     setUsuario(null)
-  }
+  }, [])
 
-  const value = {
+  const value = useMemo(() => ({
     usuario,
     role: usuario ? usuario.role : null,
     isAuthenticated: Boolean(usuario),
     login,
     register,
     logout,
-  }
+  }), [usuario, login, register, logout])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
