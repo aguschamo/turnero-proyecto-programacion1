@@ -209,8 +209,8 @@ Siga las siguientes instrucciones para clonar y ejecutar el proyecto localmente.
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tu-usuario/Programacion1.git
-cd Programacion1
+git clone https://github.com/aguschamo/turnero-proyecto-programacion1.git
+cd turnero-proyecto-programacion1
 ```
 
 ---

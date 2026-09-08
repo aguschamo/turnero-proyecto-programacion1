@@ -36,7 +36,7 @@ function Footer() {
 
           <div className="col-12 col-md-4 text-center text-md-end">
             <p className="small text-secondary mb-0">
-              © 2024 Holy Nails. Todos los derechos reservados.
+              © 2025 Holy Nails. Todos los derechos reservados.
             </p>
           </div>
         </div>
