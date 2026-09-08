@@ -15,7 +15,7 @@ const servicios = [
     icon: semiIcon,
     titulo: 'SEMIPERMANENTE',
     duracion: '2 hs',
-    precio: 'Desde $XXXX',
+    precio: null,
     descripcion:
       'Color intenso y brillo por semanas con acabado impecable.',
   },
@@ -23,7 +23,7 @@ const servicios = [
     icon: kappingIcon,
     titulo: 'KAPPING',
     duracion: '2 hs',
-    precio: 'Desde $XXXX',
+    precio: null,
     descripcion:
       'Refuerzo de gel para proteger y hacer crecer tus uñas naturales.',
   },
@@ -31,7 +31,7 @@ const servicios = [
     icon: esculpidasIcon,
     titulo: 'ESCULPIDAS',
     duracion: '2:30 hs',
-    precio: 'Desde $XXXX',
+    precio: null,
     descripcion:
       'Extensión en acrílico o gel con el largo y forma que sueñes.',
   },
@@ -112,7 +112,7 @@ function Home() {
                       ⏱️ Duración: <strong>{s.duracion}</strong>
                     </p>
                     <p className="small text-dark fw-bold mb-3">
-                      💰 {s.precio}
+                      💰 {s.precio ?? 'Consultar'}
                     </p>
                     <p className="card-text small text-muted mb-4">
                       {s.descripcion}
@@ -154,7 +154,7 @@ function Home() {
             <a
               href="https://instagram.com/holy.nails.demo"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="btn btn-hn-outline"
             >
               VER MÁS EN INSTAGRAM 📷
@@ -210,7 +210,7 @@ function Home() {
               <a
                 href="https://wa.me/5492600000000"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="btn btn-hn-whatsapp"
               >
                 HABLAR POR WHATSAPP 💬

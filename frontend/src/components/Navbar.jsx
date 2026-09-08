@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext.jsx'
@@ -6,6 +7,11 @@ import Avatar from './Avatar.jsx'
 function Navbar() {
   const { usuario, role, logout } = useAuth()
   const navigate = useNavigate()
+  const [menuAbierto, setMenuAbierto] = useState(false)
+
+  function cerrarMenu() {
+    setMenuAbierto(false)
+  }
 
   function handleLogout() {
     logout()
@@ -15,22 +21,22 @@ function Navbar() {
   const enlaces = (
     <ul className="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/" data-bs-dismiss="collapse">
+        <Link className="nav-link hn-nav-link" to="/" onClick={cerrarMenu}>
           INICIO
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#servicios" data-bs-dismiss="collapse">
+        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={cerrarMenu}>
           SERVICIOS
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#galeria" data-bs-dismiss="collapse">
+        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={cerrarMenu}>
           GALERÍA
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#contacto" data-bs-dismiss="collapse">
+        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={cerrarMenu}>
           CONTACTO
         </Link>
       </li>
@@ -38,12 +44,12 @@ function Navbar() {
       {usuario && role === 'cliente' && (
         <>
           <li className="nav-item">
-            <Link className="nav-link hn-nav-link" to="/agendar" data-bs-dismiss="collapse">
+            <Link className="nav-link hn-nav-link" to="/agendar" onClick={cerrarMenu}>
               AGENDAR
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link hn-nav-link" to="/mis-turnos" data-bs-dismiss="collapse">
+            <Link className="nav-link hn-nav-link" to="/mis-turnos" onClick={cerrarMenu}>
               MIS TURNOS
             </Link>
           </li>
@@ -52,7 +58,7 @@ function Navbar() {
 
       {usuario && role === 'admin' && (
         <li className="nav-item">
-          <Link className="nav-link hn-nav-link" to="/admin" data-bs-dismiss="collapse">
+          <Link className="nav-link hn-nav-link" to="/admin" onClick={cerrarMenu}>
             PANEL ADMIN
           </Link>
         </li>
@@ -60,7 +66,7 @@ function Navbar() {
 
       {usuario && (
         <li className="nav-item">
-          <Link className="nav-link hn-nav-link" to="/perfil" data-bs-dismiss="collapse">
+          <Link className="nav-link hn-nav-link" to="/perfil" onClick={cerrarMenu}>
             PERFIL
           </Link>
         </li>
@@ -71,23 +77,22 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg sticky-top hn-navbar">
       <div className="container">
-        <Link className="navbar-brand hn-brand" to="/" data-bs-dismiss="collapse">
+        <Link className="navbar-brand hn-brand" to="/" onClick={cerrarMenu}>
           holy nails ✨
         </Link>
 
         <button
           className="navbar-toggler border-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#hnNavbarMenu"
           aria-controls="hnNavbarMenu"
-          aria-expanded="false"
+          aria-expanded={menuAbierto}
           aria-label="Abrir navegación"
+          onClick={() => setMenuAbierto((prev) => !prev)}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="hnNavbarMenu">
+        <div className={`collapse navbar-collapse${menuAbierto ? ' show' : ''}`} id="hnNavbarMenu">
           {enlaces}
 
           <div className="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
@@ -100,20 +105,20 @@ function Navbar() {
                 <button
                   type="button"
                   className="btn btn-hn-pink rounded-pill fw-bold"
-                  onClick={handleLogout}
+                  onClick={() => { cerrarMenu(); handleLogout() }}
                 >
                   CERRAR SESIÓN ⏻
                 </button>
               </>
             ) : (
               <>
-                <Link to="/agendar" className="btn btn-hn-dark rounded-pill fw-bold">
+                <Link to="/agendar" className="btn btn-hn-dark rounded-pill fw-bold" onClick={cerrarMenu}>
                   AGENDAR TURNO ✨
                 </Link>
-                <Link to="/register" className="btn btn-hn-outline rounded-pill fw-bold">
+                <Link to="/register" className="btn btn-hn-outline rounded-pill fw-bold" onClick={cerrarMenu}>
                   REGISTRARTE
                 </Link>
-                <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold">
+                <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold" onClick={cerrarMenu}>
                   INICIAR SESIÓN 👤
                 </Link>
               </>
