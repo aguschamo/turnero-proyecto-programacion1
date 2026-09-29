@@ -101,7 +101,7 @@ function Navbar() {
           type="button"
           aria-controls="hnNavbarMenu"
           aria-expanded={menuAbierto}
-          aria-label="Abrir navegación"
+          aria-label={menuAbierto ? 'Cerrar navegación' : 'Abrir navegación'}
           onClick={() => setMenuAbierto((prev) => !prev)}
         >
           <span className="navbar-toggler-icon"></span>
