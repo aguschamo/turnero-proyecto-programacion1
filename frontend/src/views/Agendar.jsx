@@ -2,14 +2,34 @@ import { useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
+function fechaDeHoy() {
+  const hoy = new Date()
+  const anio = hoy.getFullYear()
+  const mes = String(hoy.getMonth() + 1).padStart(2, '0')
+  const dia = String(hoy.getDate()).padStart(2, '0')
+  return `${anio}-${mes}-${dia}`
+}
+
 function Agendar() {
   const [servicio, setServicio] = useState('')
   const [fecha, setFecha] = useState('')
   const [hora, setHora] = useState('')
   const [aviso, setAviso] = useState(false)
+  const [error, setError] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
+    setAviso(false)
+    setError('')
+
+    if (fecha < fechaDeHoy()) {
+      setError('La fecha no puede ser anterior a hoy.')
+      return
+    }
+    if (hora < '09:00' || hora > '20:00') {
+      setError('Fecha u hora fuera del horario de atención (09:00 a 20:00).')
+      return
+    }
     setAviso(true)
   }
 
@@ -27,6 +47,12 @@ function Agendar() {
 
             <div className="card hn-card border-0 shadow-sm p-4">
               <div className="card-body">
+                {error && (
+                  <div className="alert alert-danger py-2 small" role="alert">
+                    {error}
+                  </div>
+                )}
+
                 {aviso && (
                   <div className="alert alert-info py-2 small" role="alert">
                     La reserva se conectará al backend en el TP8. Por ahora solo
@@ -64,6 +90,7 @@ function Agendar() {
                         id="agendarFecha"
                         type="date"
                         className="form-control"
+                        min={fechaDeHoy()}
                         value={fecha}
                         onChange={(e) => setFecha(e.target.value)}
                         required
@@ -77,6 +104,9 @@ function Agendar() {
                         id="agendarHora"
                         type="time"
                         className="form-control"
+                        min="09:00"
+                        max="20:00"
+                        step="900"
                         value={hora}
                         onChange={(e) => setHora(e.target.value)}
                         required

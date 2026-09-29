@@ -297,7 +297,7 @@ Desde el directorio `frontend/`:
 ```bash
 npm run dev
 ```
-- **Aplicación Web**: `http://localhost:5173/` (o `http://localhost:3000/`)
+- **Aplicación Web**: `http://localhost:3000/`
 
 ---
 

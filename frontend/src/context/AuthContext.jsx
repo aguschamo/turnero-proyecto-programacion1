@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
       return false
     }
     const nuevo = {
-      id: usuarios.length + 1,
+      id: crypto.randomUUID(),
       nombre: nombre.trim() || null,
       email: email.trim().toLowerCase(),
       password,

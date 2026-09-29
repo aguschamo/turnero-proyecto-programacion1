@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Avatar from '../components/Avatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -11,6 +11,12 @@ const ETIQUETA_ROL = {
 function Perfil() {
   const { usuario } = useAuth()
   const [preview, setPreview] = useState(null)
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+    }
+  }, [preview])
 
   function handlePhoto(e) {
     const archivo = e.target.files?.[0]
