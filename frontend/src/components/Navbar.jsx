@@ -95,7 +95,7 @@ function Navbar() {
         <div className={`collapse navbar-collapse${menuAbierto ? ' show' : ''}`} id="hnNavbarMenu">
           {enlaces}
 
-          <div className="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
+          <div className="d-flex flex-nowrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
             {usuario ? (
               <>
                 <span className="small text-dark d-flex align-items-center gap-2">
@@ -113,13 +113,13 @@ function Navbar() {
             ) : (
               <>
                 <Link to="/agendar" className="btn btn-hn-dark rounded-pill fw-bold" onClick={cerrarMenu}>
-                  AGENDAR TURNO ✨
+                  AGENDAR TURNO
                 </Link>
                 <Link to="/register" className="btn btn-hn-outline rounded-pill fw-bold" onClick={cerrarMenu}>
                   REGISTRARTE
                 </Link>
                 <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold" onClick={cerrarMenu}>
-                  INICIAR SESIÓN 👤
+                  INICIAR SESIÓN👤
                 </Link>
               </>
             )}
