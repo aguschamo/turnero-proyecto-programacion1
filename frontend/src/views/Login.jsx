@@ -109,15 +109,17 @@ function Login() {
                   </Link>
                 </p>
 
-                <div className="small text-center text-muted mt-4 pt-3 border-top">
-                  <p className="mb-1">Usuarios de prueba:</p>
-                  <p className="mb-0">
-                    Cliente: <code>cliente@holynails.com</code> /{' '}
-                    <code>1234</code>
-                    <br />
-                    Admin: <code>admin@holynails.com</code> / <code>1234</code>
-                  </p>
-                </div>
+                {import.meta.env.DEV && (
+                  <div className="small text-center text-muted mt-4 pt-3 border-top">
+                    <p className="mb-1">Usuarios de prueba:</p>
+                    <p className="mb-0">
+                      Cliente: <code>cliente@holynails.com</code> /{' '}
+                      <code>1234</code>
+                      <br />
+                      Admin: <code>admin@holynails.com</code> / <code>1234</code>
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

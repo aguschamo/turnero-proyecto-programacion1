@@ -13,6 +13,21 @@ function Navbar() {
     setMenuAbierto(false)
   }
 
+  function irASeccion(id) {
+    cerrarMenu()
+    let intentos = 0
+    const intentar = () => {
+      const seccion = document.getElementById(id)
+      if (seccion) {
+        seccion.scrollIntoView({ behavior: 'smooth' })
+      } else if (intentos < 20) {
+        intentos += 1
+        setTimeout(intentar, 50)
+      }
+    }
+    setTimeout(intentar, 0)
+  }
+
   function handleLogout() {
     logout()
     navigate('/login', { replace: true })
@@ -26,17 +41,17 @@ function Navbar() {
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={() => irASeccion('servicios')}>
           SERVICIOS
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={() => irASeccion('galeria')}>
           GALERÍA
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={() => irASeccion('contacto')}>
           CONTACTO
         </Link>
       </li>

@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useMemo, useState } from 'react
 
 const AuthContext = createContext(null)
 
+// MOCK de autenticación (TP4/TP5): las passwords viven solo en el cliente.
+// TP8: se reemplazan por API + JWT (POST /api/auth/login/), password solo en el servidor.
 const USUARIOS_INICIALES = [
   {
     id: 1,
