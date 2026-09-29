@@ -99,7 +99,9 @@ function Register() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      minLength={4}
+                      minLength={8}
+                      pattern="(?=.*[A-Za-z])(?=.*\d).{8,}"
+                      title="Mínimo 8 caracteres, una letra y un número"
                       autoComplete="new-password"
                     />
                   </div>
@@ -116,7 +118,9 @@ function Register() {
                       value={confirmar}
                       onChange={(e) => setConfirmar(e.target.value)}
                       required
-                      minLength={4}
+                      minLength={8}
+                      pattern="(?=.*[A-Za-z])(?=.*\d).{8,}"
+                      title="Mínimo 8 caracteres, una letra y un número"
                       autoComplete="new-password"
                     />
                   </div>
