@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from .models import User
 
@@ -32,3 +34,35 @@ class RegisterSerializer(serializers.ModelSerializer):
             role=User.Roles.CLIENTE,
         )
         return user
+
+
+class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
+    email = serializers.EmailField(required=False, allow_blank=True, default='')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[self.username_field].required = False
+        self.fields[self.username_field].allow_blank = True
+
+    def validate(self, data):
+        email = (data.get('email') or '').strip()
+        password = data.get('password', '')
+
+        if email:
+            user = User.objects.filter(email__iexact=email).first()
+            if user is not None and user.is_active and user.check_password(password):
+                refresh = self.get_token(user)
+                return {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
+            raise AuthenticationFailed(
+                self.error_messages['no_active_account'],
+                'no_active_account',
+            )
+
+        if not data.get(self.username_field):
+            raise serializers.ValidationError({
+                self.username_field: ['This field is required.'],
+            })
+        return super().validate(data)
