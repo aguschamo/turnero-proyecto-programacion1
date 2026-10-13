@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { api, clearTokens, getAccessToken, onAuthCleared, setTokens } from '../services/api.js'
 
@@ -23,6 +23,9 @@ function normalizeUser(profile) {
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  // Se activa cuando ocurre login o logout mientras restore() está pendiente,
+  // para que restore no sobrescriba el resultado de esa acción posterior.
+  const authActionRef = useRef(false)
 
   // Restaura la sesión al montar: si hay access token, verifica el perfil contra el backend.
   // api.js maneja el refresh automático si el access está vencido.
@@ -36,9 +39,9 @@ export function AuthProvider({ children }) {
       }
       try {
         const profile = await api.get('/api/auth/profile/')
-        if (!cancelled) setUsuario(normalizeUser(profile))
+        if (!cancelled && !authActionRef.current) setUsuario(normalizeUser(profile))
       } catch {
-        if (!cancelled) setUsuario(null)
+        if (!cancelled && !authActionRef.current) setUsuario(null)
       } finally {
         if (!cancelled) setIsLoading(false)
       }
@@ -58,6 +61,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const login = useCallback(async (email, password) => {
+    authActionRef.current = true
     const data = await api.post(
       '/api/auth/login/',
       { email, password },
@@ -80,6 +84,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(() => {
+    authActionRef.current = true
     clearTokens()
     setUsuario(null)
   }, [])

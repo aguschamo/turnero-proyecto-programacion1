@@ -3,6 +3,20 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000'
 const ACCESS_KEY = 'hn_access'
 const REFRESH_KEY = 'hn_refresh'
 
+// Generación de sesión: se incrementa en cada mutación de tokens (set o clear).
+// Una operación de refresh que haya capturado una generación obsoleta no debe
+// escribir tokens ni limpiar una sesión posterior.
+let sessionEpoch = 0
+
+function bumpEpoch() {
+  sessionEpoch += 1
+  return sessionEpoch
+}
+
+export function getSessionEpoch() {
+  return sessionEpoch
+}
+
 const authClearedListeners = new Set()
 
 export function onAuthCleared(listener) {
@@ -23,11 +37,13 @@ export function getRefreshToken() {
 }
 
 export function setTokens({ access, refresh }) {
+  bumpEpoch()
   if (access) localStorage.setItem(ACCESS_KEY, access)
   if (refresh) localStorage.setItem(REFRESH_KEY, refresh)
 }
 
 export function clearTokens() {
+  bumpEpoch()
   localStorage.removeItem(ACCESS_KEY)
   localStorage.removeItem(REFRESH_KEY)
   notifyAuthCleared()
@@ -46,6 +62,7 @@ let refreshPromise = null
 
 async function refreshAccessToken() {
   if (refreshPromise) return refreshPromise
+  const epochAtStart = sessionEpoch
 
   refreshPromise = (async () => {
     const refresh = getRefreshToken()
@@ -59,6 +76,13 @@ async function refreshAccessToken() {
 
     if (!res.ok) throw new ApiError('Refresh failed', res.status)
     const data = await res.json()
+
+    // Si la sesión cambió durante el fetch (logout o login nuevo),
+    // no escribimos tokens: el resultado es obsoleto.
+    if (sessionEpoch !== epochAtStart) {
+      throw new ApiError('Session changed during refresh', 401)
+    }
+
     setTokens({ access: data.access })
     return data.access
   })()
@@ -121,10 +145,15 @@ export async function apiRequest(
   }
 
   if (res.status === 401 && !skipAuth && !_isRetry && getRefreshToken()) {
+    const epochBefore = sessionEpoch
     try {
       await refreshAccessToken()
     } catch {
-      clearTokens()
+      // Solo cerramos la sesión si el epoch no cambió: si cambió, fue
+      // porque se hizo logout o login nuevo, y no debemos borrar esos tokens.
+      if (sessionEpoch === epochBefore) {
+        clearTokens()
+      }
       throw new ApiError('La sesión expiró. Iniciá sesión nuevamente.', 401)
     }
     return apiRequest(path, { method, body, headers, skipAuth, _isRetry: true })
