@@ -1,5 +1,19 @@
 import { Link } from 'react-router-dom'
 
+function irASeccion(id) {
+  let intentos = 0
+  const intentar = () => {
+    const seccion = document.getElementById(id)
+    if (seccion) {
+      seccion.scrollIntoView({ behavior: 'smooth' })
+    } else if (intentos < 20) {
+      intentos += 1
+      setTimeout(intentar, 50)
+    }
+  }
+  setTimeout(intentar, 0)
+}
+
 function Footer() {
   return (
     <footer className="hn-footer py-5 mt-auto">
@@ -20,13 +34,13 @@ function Footer() {
                 <Link to="/" className="small fw-semibold">INICIO</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <Link to="/#servicios" className="small fw-semibold">SERVICIOS</Link>
+                <Link to="/#servicios" className="small fw-semibold" onClick={() => irASeccion('servicios')}>SERVICIOS</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <Link to="/#galeria" className="small fw-semibold">GALERÍA</Link>
+                <Link to="/#galeria" className="small fw-semibold" onClick={() => irASeccion('galeria')}>GALERÍA</Link>
               </li>
               <li className="list-inline-item mx-2">
-                <Link to="/#contacto" className="small fw-semibold">CONTACTO</Link>
+                <Link to="/#contacto" className="small fw-semibold" onClick={() => irASeccion('contacto')}>CONTACTO</Link>
               </li>
             </ul>
             <p className="text-secondary small mb-0">

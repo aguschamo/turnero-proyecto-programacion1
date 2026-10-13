@@ -72,6 +72,16 @@ En la siguiente tabla se detalla el estado actual de cada componente del sistema
 
 ---
 
+> ⚠️ **Nota de seguridad — Autenticación mock (TP7)**
+>
+> La autenticación del **frontend React** (AuthContext) es un **mock educativo**: las contraseñas viven en el bundle de JavaScript del cliente y la validación ocurre completamente en el navegador. Esto es intencional para la etapa actual del trabajo práctico y **no constituye seguridad real**.
+>
+> - Las credenciales de demo (`cliente@holynails.com / 1234`, `admin@holynails.com / 1234`) son **públicas a propósito** y no deben considerarse secretas.
+> - El rol de un usuario puede modificarse desde las herramientas de desarrollo del navegador (React DevTools).
+> - **No desplegar en producción** con esta autenticación. En el TP8 se reemplazará por `POST /api/auth/login/` con JWT en el servidor (ya implementado en el backend Django).
+
+---
+
 ## ✨ Funcionalidades
 
 ### 🔐 Autenticación y Cuentas
