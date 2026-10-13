@@ -5,12 +5,27 @@ import { useAuth } from '../context/AuthContext.jsx'
 import Avatar from './Avatar.jsx'
 
 function Navbar() {
+  const [menuAbierto, setMenuAbierto] = useState(false)
   const { usuario, role, logout } = useAuth()
   const navigate = useNavigate()
-  const [menuAbierto, setMenuAbierto] = useState(false)
 
   function cerrarMenu() {
     setMenuAbierto(false)
+  }
+
+  function irASeccion(id) {
+    cerrarMenu()
+    let intentos = 0
+    const intentar = () => {
+      const seccion = document.getElementById(id)
+      if (seccion) {
+        seccion.scrollIntoView({ behavior: 'smooth' })
+      } else if (intentos < 20) {
+        intentos += 1
+        setTimeout(intentar, 50)
+      }
+    }
+    setTimeout(intentar, 0)
   }
 
   function handleLogout() {
@@ -26,17 +41,17 @@ function Navbar() {
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#servicios" onClick={() => irASeccion('servicios')}>
           SERVICIOS
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#galeria" onClick={() => irASeccion('galeria')}>
           GALERÍA
         </Link>
       </li>
       <li className="nav-item">
-        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={cerrarMenu}>
+        <Link className="nav-link hn-nav-link" to="/#contacto" onClick={() => irASeccion('contacto')}>
           CONTACTO
         </Link>
       </li>
@@ -86,7 +101,7 @@ function Navbar() {
           type="button"
           aria-controls="hnNavbarMenu"
           aria-expanded={menuAbierto}
-          aria-label="Abrir navegación"
+          aria-label={menuAbierto ? 'Cerrar navegación' : 'Abrir navegación'}
           onClick={() => setMenuAbierto((prev) => !prev)}
         >
           <span className="navbar-toggler-icon"></span>
@@ -95,7 +110,7 @@ function Navbar() {
         <div className={`collapse navbar-collapse${menuAbierto ? ' show' : ''}`} id="hnNavbarMenu">
           {enlaces}
 
-          <div className="d-flex flex-wrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
+          <div className="d-flex flex-nowrap align-items-center justify-content-center gap-2 mt-2 mt-lg-0">
             {usuario ? (
               <>
                 <span className="small text-dark d-flex align-items-center gap-2">
@@ -105,7 +120,7 @@ function Navbar() {
                 <button
                   type="button"
                   className="btn btn-hn-pink rounded-pill fw-bold"
-                  onClick={() => { cerrarMenu(); handleLogout() }}
+                  onClick={handleLogout}
                 >
                   CERRAR SESIÓN ⏻
                 </button>
@@ -113,13 +128,13 @@ function Navbar() {
             ) : (
               <>
                 <Link to="/agendar" className="btn btn-hn-dark rounded-pill fw-bold" onClick={cerrarMenu}>
-                  AGENDAR TURNO ✨
+                  AGENDAR TURNO
                 </Link>
                 <Link to="/register" className="btn btn-hn-outline rounded-pill fw-bold" onClick={cerrarMenu}>
                   REGISTRARTE
                 </Link>
                 <Link to="/login" className="btn btn-hn-pink rounded-pill fw-bold" onClick={cerrarMenu}>
-                  INICIAR SESIÓN 👤
+                  INICIAR SESIÓN👤
                 </Link>
               </>
             )}

@@ -77,6 +77,9 @@ function Home() {
                   src={heroImg}
                   alt="Holy Nails - Muestra de manicura"
                   className="hn-hero-img"
+                  width={1170}
+                  height={1552}
+                  fetchPriority="high"
                 />
                 <span className="hn-hero-butterfly" role="img" aria-label="Mariposa">
                   🦋
@@ -143,7 +146,11 @@ function Home() {
               <div className="col-6 col-md-6 col-lg-3" key={t.id}>
                 <div className="hn-gallery-card h-100">
                   <div className="hn-gallery-thumb">
-                    <img src={t.imagen} alt={"Trabajo de Holy Nails"} />
+                    <img
+                      src={t.imagen}
+                      alt={`Diseño ${t.id} de manicura Holy Nails`}
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               </div>

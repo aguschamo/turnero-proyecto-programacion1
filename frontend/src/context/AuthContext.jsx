@@ -1,7 +1,9 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
 const AuthContext = createContext(null)
 
+// MOCK de autenticación (TP4/TP5): las passwords viven solo en el cliente.
+// TP8: se reemplazan por API + JWT (POST /api/auth/login/), password solo en el servidor.
 const USUARIOS_INICIALES = [
   {
     id: 1,
@@ -27,7 +29,23 @@ function modeloUsuario({ id, nombre, email, role, photo }) {
 
 export function AuthProvider({ children }) {
   const [usuarios, setUsuarios] = useState(USUARIOS_INICIALES)
-  const [usuario, setUsuario] = useState(null)
+  const [usuario, setUsuario] = useState(() => {
+    try {
+      const sesionGuardada = sessionStorage.getItem('hn_sesion')
+      return sesionGuardada ? JSON.parse(sesionGuardada) : null
+    } catch {
+      return null
+    }
+  })
+
+  // Sincroniza la sesión con sessionStorage: persiste al loguearse, limpia al cerrar sesión o hacer F5-logout.
+  useEffect(() => {
+    if (usuario) {
+      sessionStorage.setItem('hn_sesion', JSON.stringify(usuario))
+    } else {
+      sessionStorage.removeItem('hn_sesion')
+    }
+  }, [usuario])
 
   const login = useCallback((email, password) => {
     const encontrado = usuarios.find(
@@ -45,7 +63,7 @@ export function AuthProvider({ children }) {
       return false
     }
     const nuevo = {
-      id: usuarios.length + 1,
+      id: crypto.randomUUID(),
       nombre: nombre.trim() || null,
       email: email.trim().toLowerCase(),
       password,
