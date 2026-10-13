@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 const RUTAS_CLIENTE = ['/agendar', '/mis-turnos', '/perfil']
 
 function Login() {
-  const { login, isAuthenticated, role } = useAuth()
+  const { login, isAuthenticated, role, isLoading } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const from = location.state?.from?.pathname
@@ -15,27 +15,37 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (isAuthenticated) {
+  if (!isLoading && isAuthenticated) {
     return <Navigate to={role === 'admin' ? '/admin' : '/perfil'} replace />
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    const sesion = login(email, password)
-    if (!sesion) {
-      setError('Credenciales incorrectas. Verificá tu correo y contraseña.')
-      return
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const sesion = await login(email, password)
+      const destino =
+        sesion.role === 'admin'
+          ? '/admin'
+          : RUTAS_CLIENTE.includes(from)
+            ? from
+            : '/perfil'
+      navigate(destino, { replace: true })
+    } catch (err) {
+      if (err.status === 0) {
+        setError(err.message)
+      } else if (err.status === 401) {
+        setError('Credenciales incorrectas. Verificá tu correo y contraseña.')
+      } else {
+        setError(err.message || 'No se pudo iniciar sesión. Intentá nuevamente.')
+      }
+    } finally {
+      setIsSubmitting(false)
     }
-
-    const destino =
-      sesion.role === 'admin'
-        ? '/admin'
-        : RUTAS_CLIENTE.includes(from)
-          ? from
-          : '/perfil'
-
-    navigate(destino, { replace: true })
   }
 
   return (
@@ -97,8 +107,12 @@ function Login() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-hn-dark w-100 fw-bold">
-                    INICIAR SESIÓN
+                  <button
+                    type="submit"
+                    className="btn btn-hn-dark w-100 fw-bold"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'INICIANDO…' : 'INICIAR SESIÓN'}
                   </button>
                 </form>
 
@@ -108,18 +122,6 @@ function Login() {
                     Registrate
                   </Link>
                 </p>
-
-                {import.meta.env.DEV && (
-                  <div className="small text-center text-muted mt-4 pt-3 border-top">
-                    <p className="mb-1">Usuarios de prueba:</p>
-                    <p className="mb-0">
-                      Cliente: <code>cliente@holynails.com</code> /{' '}
-                      <code>1234</code>
-                      <br />
-                      Admin: <code>admin@holynails.com</code> / <code>1234</code>
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>

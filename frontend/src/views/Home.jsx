@@ -1,42 +1,13 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import heroImg from '../assets/hero.jpg'
-
-import semiIcon from '../assets/icons/semi.jpg'
-import kappingIcon from '../assets/icons/kapping.jpg'
-import esculpidasIcon from '../assets/icons/esculpidas.jpg'
 
 import galeria1 from '../assets/galeria/trabajo1.jpg'
 import galeria2 from '../assets/galeria/trabajo2.jpg'
 import galeria3 from '../assets/galeria/trabajo3.jpg'
 import galeria4 from '../assets/galeria/trabajo4.jpg'
 
-const servicios = [
-  {
-    icon: semiIcon,
-    titulo: 'SEMIPERMANENTE',
-    duracion: '2 hs',
-    precio: null,
-    descripcion:
-      'Color intenso y brillo por semanas con acabado impecable.',
-  },
-  {
-    icon: kappingIcon,
-    titulo: 'KAPPING',
-    duracion: '2 hs',
-    precio: null,
-    descripcion:
-      'Refuerzo de gel para proteger y hacer crecer tus uñas naturales.',
-  },
-  {
-    icon: esculpidasIcon,
-    titulo: 'ESCULPIDAS',
-    duracion: '2:30 hs',
-    precio: null,
-    descripcion:
-      'Extensión en acrílico o gel con el largo y forma que sueñes.',
-  },
-]
-
+import { api } from '../services/api.js'
 
 const trabajosGaleria = [
   { id: 1, imagen: galeria1 },
@@ -45,7 +16,53 @@ const trabajosGaleria = [
   { id: 4, imagen: galeria4 },
 ]
 
+function formatearDuracion(duracion) {
+  if (!duracion) return 'Consultar'
+  const [horas, minutos] = duracion.split(':')
+  const h = parseInt(horas, 10)
+  const m = parseInt(minutos, 10)
+  if (m === 0) return `${h} hs`
+  return `${h}:${String(m).padStart(2, '0')} hs`
+}
+
+function formatearPrecio(precio) {
+  if (precio === null || precio === undefined || precio === '') return 'Consultar'
+  const numero = Number(precio)
+  if (Number.isNaN(numero)) return 'Consultar'
+  return `$ ${numero.toLocaleString('es-AR')}`
+}
+
 function Home() {
+  const [servicios, setServicios] = useState([])
+  const [serviciosLoading, setServiciosLoading] = useState(true)
+  const [serviciosError, setServiciosError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function cargarServicios() {
+      setServiciosLoading(true)
+      setServiciosError(null)
+      try {
+        const data = await api.get('/api/servicios/')
+        if (!cancelled) {
+          setServicios(Array.isArray(data.results) ? data.results : [])
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setServicios([])
+          setServiciosError(err.message || 'No se pudieron cargar los servicios.')
+        }
+      } finally {
+        if (!cancelled) setServiciosLoading(false)
+      }
+    }
+
+    cargarServicios()
+    return () => {
+      cancelled = true
+    }
+  }, [])
   return (
     <>
       {/* HERO SECTION */}
@@ -100,34 +117,53 @@ function Home() {
             </p>
           </div>
 
-          <div className="row g-4">
-            {servicios.map((s) => (
-              <div className="col-12 col-md-4" key={s.titulo}>
-                <div className="card hn-card h-100 text-center p-4">
-                  <div className="card-body d-flex flex-column align-items-center">
-                    <div className="hn-card-icon">
-                      <img src={s.icon} alt={s.titulo} className="img-fluid" />
+          {serviciosLoading && (
+            <div className="text-center py-4">
+              <p className="text-muted small mb-0">Cargando servicios…</p>
+            </div>
+          )}
+
+          {!serviciosLoading && serviciosError && (
+            <div className="alert alert-warning py-2 small text-center" role="alert">
+              {serviciosError}
+            </div>
+          )}
+
+          {!serviciosLoading && !serviciosError && servicios.length === 0 && (
+            <div className="text-center py-4">
+              <p className="text-muted small mb-0">
+                No hay servicios disponibles por el momento.
+              </p>
+            </div>
+          )}
+
+          {!serviciosLoading && !serviciosError && servicios.length > 0 && (
+            <div className="row g-4">
+              {servicios.map((s) => (
+                <div className="col-12 col-md-4" key={s.id}>
+                  <div className="card hn-card h-100 text-center p-4">
+                    <div className="card-body d-flex flex-column align-items-center">
+                      <div className="hn-card-icon" aria-hidden="true">
+                        <span style={{ fontSize: '2.5rem' }}>💅</span>
+                      </div>
+                      <h3 className="h5 font-weight-bold fw-bold mt-2 mb-2">
+                        {s.nombre}
+                      </h3>
+                      <p className="small text-muted mb-2">
+                        ⏱️ Duración: <strong>{formatearDuracion(s.duracion)}</strong>
+                      </p>
+                      <p className="small text-dark fw-bold mb-3">
+                        💰 {formatearPrecio(s.precio)}
+                      </p>
+                      <a href="#contacto" className="btn btn-hn-pink mt-auto">
+                        VER MÁS
+                      </a>
                     </div>
-                    <h3 className="h5 font-weight-bold fw-bold mt-2 mb-2">
-                      {s.titulo}
-                    </h3>
-                    <p className="small text-muted mb-2">
-                      ⏱️ Duración: <strong>{s.duracion}</strong>
-                    </p>
-                    <p className="small text-dark fw-bold mb-3">
-                      💰 {s.precio ?? 'Consultar'}
-                    </p>
-                    <p className="card-text small text-muted mb-4">
-                      {s.descripcion}
-                    </p>
-                    <a href="#contacto" className="btn btn-hn-pink mt-auto">
-                      VER MÁS
-                    </a>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
