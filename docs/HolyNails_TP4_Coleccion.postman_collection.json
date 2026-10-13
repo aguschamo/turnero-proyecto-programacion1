@@ -24,6 +24,31 @@
       "key": "vendedor_token",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "servicio_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "turno_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "turno_id2",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "fecha_futura",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -46,7 +71,20 @@
             },
             "url": "{{base_url}}/api/auth/register/"
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('espera 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "Registrar usuario CLIENTE",
@@ -64,7 +102,20 @@
             },
             "url": "{{base_url}}/api/auth/register/"
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('espera 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "Login ADMIN — Obtener token",
@@ -73,11 +124,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.access) {",
-                  "    pm.collectionVariables.set(\"admin_token\", jsonData.access);",
-                  "    console.log(\"admin_token guardado\");",
-                  "}"
+                  "pm.test('login responde 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const d = pm.response.json();",
+                  "pm.expect(d.access, 'falta access token').to.be.ok;",
+                  "pm.expect(d.refresh, 'falta refresh token').to.be.ok;",
+                  "pm.collectionVariables.set('admin_token', d.access);",
+                  "pm.collectionVariables.set('refresh_token', d.refresh);"
                 ],
                 "type": "text/javascript"
               }
@@ -106,11 +160,14 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "var jsonData = pm.response.json();",
-                  "if (jsonData.access) {",
-                  "    pm.collectionVariables.set(\"cliente_token\", jsonData.access);",
-                  "    console.log(\"cliente_token guardado\");",
-                  "}"
+                  "pm.test('login responde 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const d = pm.response.json();",
+                  "pm.expect(d.access, 'falta access token').to.be.ok;",
+                  "pm.expect(d.refresh, 'falta refresh token').to.be.ok;",
+                  "pm.collectionVariables.set('cliente_token', d.access);",
+                  "pm.collectionVariables.set('refresh_token', d.refresh);"
                 ],
                 "type": "text/javascript"
               }
@@ -131,6 +188,41 @@
             "url": "{{base_url}}/api/auth/login/"
           },
           "response": []
+        },
+        {
+          "name": "Login VENDEDOR — Obtener token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/auth/login/",
+            "description": "Requiere usuario VENDEDOR creado via Django shell (el registro publico asigna CLIENTE).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"vendedor_tp4\",\n  \"password\": \"Vendedor1234!\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('login responde 200', function () { pm.response.to.have.status(200); });",
+                  "const d = pm.response.json();",
+                  "pm.expect(d.access, 'falta access token').to.be.ok;",
+                  "pm.expect(d.refresh, 'falta refresh token').to.be.ok;",
+                  "pm.collectionVariables.set('vendedor_token', d.access);",
+                  "pm.collectionVariables.set('refresh_token', d.refresh);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     },
@@ -160,7 +252,22 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "const svc = pm.response.json();",
+                      "pm.collectionVariables.set('servicio_id', svc.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "S-L03: Listar servicios con ADMIN (ver is_active)",
@@ -174,7 +281,20 @@
                 ],
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-L03: Listar todos los turnos con ADMIN",
@@ -188,7 +308,20 @@
                 ],
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-C03: Crear turno con ADMIN",
@@ -206,11 +339,26 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-10\",\n  \"hora\": \"11:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"11:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "const t = pm.response.json();",
+                      "pm.collectionVariables.set('turno_id2', t.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "U-A03: Listar usuarios con ADMIN",
@@ -224,7 +372,117 @@
                 ],
                 "url": "{{base_url}}/api/users/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-E03: ADMIN edita cualquier turno",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id2}}/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"estado\": \"confirmado\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () { pm.response.to.have.status(200); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "R-07: ADMIN cambia estado del turno",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id2}}/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"estado\": \"cancelado\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () { pm.response.to.have.status(200); });",
+                      "// estado es writable solo para ADMIN",
+                      "pm.expect(pm.response.json().estado).to.eql('cancelado');"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-D03: ADMIN borra cualquier turno",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id2}}/"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 204', function () { pm.response.to.have.status(204); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -251,7 +509,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 403', function () {",
+                      "    pm.response.to.have.status(403);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "S-L02: Listar servicios con CLIENTE (sin is_active)",
@@ -265,7 +536,20 @@
                 ],
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-C02: Crear turno con CLIENTE",
@@ -283,11 +567,26 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-11\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "const t = pm.response.json();",
+                      "pm.collectionVariables.set('turno_id', t.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-L02: Listar mis turnos con CLIENTE",
@@ -301,7 +600,20 @@
                 ],
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "U-A02: Intentar listar usuarios con CLIENTE → 403",
@@ -315,7 +627,206 @@
                 ],
                 "url": "{{base_url}}/api/users/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 403', function () {",
+                      "    pm.response.to.have.status(403);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-L04: Ver turno propio",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id}}/"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () { pm.response.to.have.status(200); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-L05: Ver turno ajeno (inexistente)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/99999/"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 404', function () { pm.response.to.have.status(404); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-E01: Editar turno propio",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id}}/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora\": \"14:00\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () { pm.response.to.have.status(200); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-E02: Editar turno ajeno (inexistente)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/99999/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora\": \"14:00\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 404', function () { pm.response.to.have.status(404); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "V-T06: Fecha+hora duplicada → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": \"{{servicio_id}}\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "T-D01: Borrar turno propio",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/{{turno_id}}/"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 204', function () { pm.response.to.have.status(204); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -338,7 +849,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "S-L01: Listar servicios sin auth (solo activos)",
@@ -346,7 +870,20 @@
                 "method": "GET",
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-C01: Crear turno sin auth → 401",
@@ -360,11 +897,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-12\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "T-L01: Listar turnos sin auth → 401",
@@ -372,7 +922,20 @@
                 "method": "GET",
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "U-A01: Listar usuarios sin auth → 401",
@@ -380,7 +943,20 @@
                 "method": "GET",
                 "url": "{{base_url}}/api/users/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "P-01: Ver perfil sin auth → 401",
@@ -388,7 +964,122 @@
                 "method": "GET",
                 "url": "{{base_url}}/api/auth/profile/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "VENDEDOR",
+          "item": [
+            {
+              "name": "S-C03: Crear servicio con VENDEDOR",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{vendedor_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Semi Vendedor TP4\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () { pm.response.to.have.status(201); });",
+                      "const svc = pm.response.json();",
+                      "pm.collectionVariables.set('servicio_id', svc.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "S-E03: Editar servicio con VENDEDOR",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{vendedor_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/{{servicio_id}}/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"precio\": 6000\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () { pm.response.to.have.status(200); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "S-D03: Borrar servicio con VENDEDOR",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{vendedor_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/{{servicio_id}}/"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 204', function () { pm.response.to.have.status(204); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -420,7 +1111,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-S04: Duración 0 minutos → 400",
@@ -442,7 +1146,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-S05: Precio negativo → 400",
@@ -464,7 +1181,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-T03: Fecha en el pasado → 400",
@@ -482,11 +1212,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2020-01-01\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"2020-01-01\",\n  \"hora\": \"10:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-T04: Hora antes de 09:00 → 400",
@@ -504,11 +1247,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-15\",\n  \"hora\": \"08:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"08:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-T05: Hora después de 20:00 → 400",
@@ -526,11 +1282,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-15\",\n  \"hora\": \"21:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"21:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-U01: Email ya existente → 400",
@@ -548,7 +1317,20 @@
                 },
                 "url": "{{base_url}}/api/auth/register/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-U04: Email inválido → 400",
@@ -566,7 +1348,20 @@
                 },
                 "url": "{{base_url}}/api/auth/register/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-L01: Login credenciales incorrectas → 401",
@@ -584,7 +1379,20 @@
                 },
                 "url": "{{base_url}}/api/auth/login/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-N01: Servicio inexistente → 404",
@@ -598,7 +1406,20 @@
                 ],
                 "url": "{{base_url}}/api/servicios/99999/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "V-N02: Turno inexistente → 404",
@@ -612,7 +1433,120 @@
                 ],
                 "url": "{{base_url}}/api/turnos/99999/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "V-S02: Crear servicio sin duración → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Test\",\n  \"precio\": 5000\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "V-S03: Crear servicio sin precio → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Test\",\n  \"duracion\": \"01:00:00\"\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "V-S06: Nombre excede 100 caracteres → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/",
+                "description": "JSON valido con nombre de 101 caracteres (la notacion Python {\"A\"*101} no es JSON).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000\n}"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -635,11 +1569,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"09:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"09:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-02: Turno a las 20:00 (límite superior)",
@@ -657,11 +1604,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"20:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"20:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-03: Turno a las 08:59 (fuera de rango)",
@@ -679,11 +1639,22 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"08:59\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"08:59\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-04: Turno a las 20:01 (fuera de rango)",
@@ -701,11 +1672,22 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"20:01\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"20:01\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () { pm.response.to.have.status(400); });"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-07: Servicio con precio 0",
@@ -727,7 +1709,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-08: Servicio con duración 1 minuto",
@@ -749,7 +1744,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "B-12: Turno con servicio inexistente → 400",
@@ -767,14 +1775,27 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-17\",\n  \"hora\": \"10:00\",\n  \"servicio\": 99999\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": 99999\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 400', function () {",
+                      "    pm.response.to.have.status(400);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
-              "name": "B-13: JWT expirado → 401",
+              "name": "B-13: Token inválido (no expirado) → 401",
               "request": {
                 "method": "GET",
                 "header": [
@@ -785,7 +1806,21 @@
                 ],
                 "url": "{{base_url}}/api/auth/profile/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "description": "Prueba con token invalido/typosado, NO expirado. SimpleJWT responde 401 tanto para token_invalid como token_expired; aqui se verifica el caso token_invalid (sin forma de JWT valida). El caso token_expired real requiere ACCESS_TOKEN_LIFETIME=0 en settings de test."
             },
             {
               "name": "B-14: Usar refresh token como access → 401",
@@ -799,7 +1834,20 @@
                 ],
                 "url": "{{base_url}}/api/auth/profile/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 401', function () {",
+                      "    pm.response.to.have.status(401);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -826,7 +1874,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "R-03: Verificar que CLIENTE no ve servicio inactivo",
@@ -840,7 +1901,20 @@
                 ],
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "R-04: Crear turno y verificar usuario asignado",
@@ -858,11 +1932,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-18\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "R-05: Intentar asignar turno a otro usuario (ignorado)",
@@ -880,11 +1967,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-18\",\n  \"hora\": \"14:00\",\n  \"servicio\": 1,\n  \"usuario\": 999\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"14:00\",\n  \"servicio\": {{servicio_id}},\n  \"usuario\": 999\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "R-08: Registro crea usuario con rol CLIENTE",
@@ -902,7 +2002,20 @@
                 },
                 "url": "{{base_url}}/api/auth/register/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         }
@@ -921,10 +2034,14 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "var jsonData = pm.response.json();",
-                      "if (jsonData.access) {",
-                      "    pm.collectionVariables.set(\"cliente_token\", jsonData.access);",
-                      "}"
+                      "pm.test('login responde 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "const d = pm.response.json();",
+                      "pm.expect(d.access, 'falta access token').to.be.ok;",
+                      "pm.expect(d.refresh, 'falta refresh token').to.be.ok;",
+                      "pm.collectionVariables.set('cliente_token', d.access);",
+                      "pm.collectionVariables.set('refresh_token', d.refresh);"
                     ],
                     "type": "text/javascript"
                   }
@@ -958,7 +2075,20 @@
                 ],
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "F-03: Crear turno",
@@ -976,11 +2106,24 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"fecha\": \"2026-09-20\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                  "raw": "{\n  \"fecha\": \"{{fecha_futura}}\",\n  \"hora\": \"10:00\",\n  \"servicio\": {{servicio_id}}\n}"
                 },
                 "url": "{{base_url}}/api/turnos/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "F-04: Verificar turno creado",
@@ -992,9 +2135,22 @@
                     "value": "Bearer {{cliente_token}}"
                   }
                 ],
-                "url": "{{base_url}}/api/turnos/?fecha=2026-09-20"
+                "url": "{{base_url}}/api/turnos/?fecha={{fecha_futura}}"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         },
@@ -1008,10 +2164,14 @@
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "var jsonData = pm.response.json();",
-                      "if (jsonData.access) {",
-                      "    pm.collectionVariables.set(\"admin_token\", jsonData.access);",
-                      "}"
+                      "pm.test('login responde 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "const d = pm.response.json();",
+                      "pm.expect(d.access, 'falta access token').to.be.ok;",
+                      "pm.expect(d.refresh, 'falta refresh token').to.be.ok;",
+                      "pm.collectionVariables.set('admin_token', d.access);",
+                      "pm.collectionVariables.set('refresh_token', d.refresh);"
                     ],
                     "type": "text/javascript"
                   }
@@ -1053,7 +2213,22 @@
                 },
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "const svc = pm.response.json();",
+                      "pm.collectionVariables.set('servicio_id', svc.id);"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "F-11: Desactivar servicio (PATCH)",
@@ -1075,7 +2250,20 @@
                 },
                 "url": "{{base_url}}/api/servicios/1/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             },
             {
               "name": "F-12: CLIENTE verifica que no aparece",
@@ -1089,11 +2277,37 @@
                 ],
                 "url": "{{base_url}}/api/servicios/"
               },
-              "response": []
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('espera 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
             }
           ]
         }
       ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// fecha_futura = hoy + 7 dias (evita fechas vencidas hardcodeadas)",
+          "const f = new Date(Date.now() + 7*864e5).toISOString().slice(0,10);",
+          "pm.collectionVariables.set('fecha_futura', f);"
+        ],
+        "type": "text/javascript"
+      }
     }
   ]
 }
