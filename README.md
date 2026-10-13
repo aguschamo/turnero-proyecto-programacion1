@@ -72,6 +72,16 @@ En la siguiente tabla se detalla el estado actual de cada componente del sistema
 
 ---
 
+> ⚠️ **Nota de seguridad — Autenticación mock (TP7)**
+>
+> La autenticación del **frontend React** (AuthContext) es un **mock educativo**: las contraseñas viven en el bundle de JavaScript del cliente y la validación ocurre completamente en el navegador. Esto es intencional para la etapa actual del trabajo práctico y **no constituye seguridad real**.
+>
+> - Las credenciales de demo (`cliente@holynails.com / 1234`, `admin@holynails.com / 1234`) son **públicas a propósito** y no deben considerarse secretas.
+> - El rol de un usuario puede modificarse desde las herramientas de desarrollo del navegador (React DevTools).
+> - **No desplegar en producción** con esta autenticación. En el TP8 se reemplazará por `POST /api/auth/login/` con JWT en el servidor (ya implementado en el backend Django).
+
+---
+
 ## ✨ Funcionalidades
 
 ### 🔐 Autenticación y Cuentas
@@ -209,8 +219,8 @@ Siga las siguientes instrucciones para clonar y ejecutar el proyecto localmente.
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tu-usuario/Programacion1.git
-cd Programacion1
+git clone https://github.com/aguschamo/turnero-proyecto-programacion1.git
+cd turnero-proyecto-programacion1
 ```
 
 ---
@@ -296,7 +306,7 @@ Desde el directorio `frontend/`:
 ```bash
 npm run dev
 ```
-- **Aplicación Web**: `http://localhost:5173/` (o `http://localhost:3000/`)
+- **Aplicación Web**: `http://localhost:3000/`
 
 ---
 
@@ -313,7 +323,8 @@ npm run dev
 ## 🎨 Diagrama de Diseño Inicial
 
 El esquema inicial de la interfaz y estructura general de la aplicación se encuentra disponible en:
-- **Diagrama de diseño inicial**: [Ver diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
+- **Diagrama versionado:** [docs/diagrama-diseno.md](docs/diagrama-diseno.md)
+- [Diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
 
 ---
 
