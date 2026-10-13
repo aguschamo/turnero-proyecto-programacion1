@@ -1,0 +1,1099 @@
+{
+  "info": {
+    "name": "Holy Nails - TP4",
+    "description": "Colección de pruebas para TP4 - Programación 1\n\nDominio: Servicios de manicurería + Turnos\nBackend: Django + DRF en http://127.0.0.1:8000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cliente_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "vendedor_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Preparación",
+      "item": [
+        {
+          "name": "Registrar usuario ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_tp4\",\n  \"email\": \"admin_tp4@test.com\",\n  \"password\": \"Admin1234!\",\n  \"nombre\": \"Admin TP4\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/register/"
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar usuario CLIENTE",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"cliente_tp4\",\n  \"email\": \"cliente_tp4@test.com\",\n  \"password\": \"Cliente1234!\",\n  \"nombre\": \"Cliente TP4\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/register/"
+          },
+          "response": []
+        },
+        {
+          "name": "Login ADMIN — Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access) {",
+                  "    pm.collectionVariables.set(\"admin_token\", jsonData.access);",
+                  "    console.log(\"admin_token guardado\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin_tp4\",\n  \"password\": \"Admin1234!\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/login/"
+          },
+          "response": []
+        },
+        {
+          "name": "Login CLIENTE — Obtener token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access) {",
+                  "    pm.collectionVariables.set(\"cliente_token\", jsonData.access);",
+                  "    console.log(\"cliente_token guardado\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"cliente_tp4\",\n  \"password\": \"Cliente1234!\"\n}"
+            },
+            "url": "{{base_url}}/api/auth/login/"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "ADMIN",
+          "item": [
+            {
+              "name": "S-C04: Crear servicio con ADMIN",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Kapping TP4\",\n  \"duracion\": \"01:30:00\",\n  \"precio\": 8000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "S-L03: Listar servicios con ADMIN (ver is_active)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-L03: Listar todos los turnos con ADMIN",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-C03: Crear turno con ADMIN",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-10\",\n  \"hora\": \"11:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "U-A03: Listar usuarios con ADMIN",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/users/"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "CLIENTE",
+          "item": [
+            {
+              "name": "S-C02: Intentar crear servicio con CLIENTE → 403",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"No Deberia Crear\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "S-L02: Listar servicios con CLIENTE (sin is_active)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-C02: Crear turno con CLIENTE",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-11\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-L02: Listar mis turnos con CLIENTE",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "U-A02: Intentar listar usuarios con CLIENTE → 403",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/users/"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Sin autenticación",
+          "item": [
+            {
+              "name": "S-C01: Crear servicio sin auth → 401",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"No Deberia Crear\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "S-L01: Listar servicios sin auth (solo activos)",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-C01: Crear turno sin auth → 401",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-12\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "T-L01: Listar turnos sin auth → 401",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "U-A01: Listar usuarios sin auth → 401",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/users/"
+              },
+              "response": []
+            },
+            {
+              "name": "P-01: Ver perfil sin auth → 401",
+              "request": {
+                "method": "GET",
+                "url": "{{base_url}}/api/auth/profile/"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lógica",
+      "item": [
+        {
+          "name": "Validaciones",
+          "item": [
+            {
+              "name": "V-S01: Crear servicio sin nombre → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-S04: Duración 0 minutos → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Test\",\n  \"duracion\": \"00:00:00\",\n  \"precio\": 5000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-S05: Precio negativo → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Test\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": -100\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-T03: Fecha en el pasado → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2020-01-01\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-T04: Hora antes de 09:00 → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-15\",\n  \"hora\": \"08:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-T05: Hora después de 20:00 → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-15\",\n  \"hora\": \"21:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-U01: Email ya existente → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"duplicado\",\n  \"email\": \"cliente_tp4@test.com\",\n  \"password\": \"Test1234!\",\n  \"nombre\": \"Duplicado\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/register/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-U04: Email inválido → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"testmail\",\n  \"email\": \"no-es-email\",\n  \"password\": \"Test1234!\",\n  \"nombre\": \"Test\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/register/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-L01: Login credenciales incorrectas → 401",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin_tp4\",\n  \"password\": \"wrongpassword\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/login/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-N01: Servicio inexistente → 404",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/99999/"
+              },
+              "response": []
+            },
+            {
+              "name": "V-N02: Turno inexistente → 404",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/99999/"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Casos de borde",
+          "item": [
+            {
+              "name": "B-01: Turno a las 09:00 (límite inferior)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"09:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-02: Turno a las 20:00 (límite superior)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"20:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-03: Turno a las 08:59 (fuera de rango)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"08:59\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-04: Turno a las 20:01 (fuera de rango)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-16\",\n  \"hora\": \"20:01\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-07: Servicio con precio 0",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Gratuito TP4\",\n  \"duracion\": \"00:30:00\",\n  \"precio\": 0\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-08: Servicio con duración 1 minuto",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Rápido TP4\",\n  \"duracion\": \"00:01:00\",\n  \"precio\": 1000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-12: Turno con servicio inexistente → 400",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-17\",\n  \"hora\": \"10:00\",\n  \"servicio\": 99999\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-13: JWT expirado → 401",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer token_exprired_ejemplo"
+                  }
+                ],
+                "url": "{{base_url}}/api/auth/profile/"
+              },
+              "response": []
+            },
+            {
+              "name": "B-14: Usar refresh token como access → 401",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{refresh_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/auth/profile/"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Reglas de negocio",
+          "item": [
+            {
+              "name": "R-01: Crear servicio inactivo con ADMIN",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Inactivo TP4\",\n  \"duracion\": \"01:00:00\",\n  \"precio\": 5000,\n  \"is_active\": false\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "R-03: Verificar que CLIENTE no ve servicio inactivo",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "R-04: Crear turno y verificar usuario asignado",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-18\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "R-05: Intentar asignar turno a otro usuario (ignorado)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-18\",\n  \"hora\": \"14:00\",\n  \"servicio\": 1,\n  \"usuario\": 999\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "R-08: Registro crea usuario con rol CLIENTE",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"verificar_rol\",\n  \"email\": \"verificar_rol@test.com\",\n  \"password\": \"Test1234!\",\n  \"nombre\": \"Verificar Rol\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/register/"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flujos",
+      "item": [
+        {
+          "name": "Flujo principal: Login → Buscar → Crear Turno → Verificar",
+          "item": [
+            {
+              "name": "F-01: Login CLIENTE",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.access) {",
+                      "    pm.collectionVariables.set(\"cliente_token\", jsonData.access);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"cliente_tp4\",\n  \"password\": \"Cliente1234!\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/login/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-02: Buscar servicios",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-03: Crear turno",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fecha\": \"2026-09-20\",\n  \"hora\": \"10:00\",\n  \"servicio\": 1\n}"
+                },
+                "url": "{{base_url}}/api/turnos/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-04: Verificar turno creado",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/turnos/?fecha=2026-09-20"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Flujo: Admin gestiona servicios",
+          "item": [
+            {
+              "name": "F-09: Login ADMIN",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var jsonData = pm.response.json();",
+                      "if (jsonData.access) {",
+                      "    pm.collectionVariables.set(\"admin_token\", jsonData.access);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"admin_tp4\",\n  \"password\": \"Admin1234!\"\n}"
+                },
+                "url": "{{base_url}}/api/auth/login/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-10: Crear servicio",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Manicuría Full TP4\",\n  \"duracion\": \"02:00:00\",\n  \"precio\": 12000\n}"
+                },
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-11: Desactivar servicio (PATCH)",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"is_active\": false\n}"
+                },
+                "url": "{{base_url}}/api/servicios/1/"
+              },
+              "response": []
+            },
+            {
+              "name": "F-12: CLIENTE verifica que no aparece",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{cliente_token}}"
+                  }
+                ],
+                "url": "{{base_url}}/api/servicios/"
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

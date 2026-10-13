@@ -208,7 +208,6 @@ Programacion1/
 
 ## ⚙️ Instalación y Configuración
 
-<<<<<<< HEAD
 Siga las siguientes instrucciones para clonar y ejecutar el proyecto localmente.
 
 ### Prerrequisitos
@@ -326,16 +325,6 @@ npm run dev
 El esquema inicial de la interfaz y estructura general de la aplicación se encuentra disponible en:
 - **Diagrama versionado:** [docs/diagrama-diseno.md](docs/diagrama-diseno.md)
 - [Diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
-
-## Frontend (TP5)
-
-Cliente React + Vite + Bootstrap en `frontend/`, servido de desarrollo en el puerto 3000:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
 
 ---
 
