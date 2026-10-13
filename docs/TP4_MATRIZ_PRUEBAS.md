@@ -140,7 +140,7 @@
 | V-S03 | Validación | `api/servicios/` | ADMIN | Crear servicio sin precio | `{"nombre":"Test","duracion":"01:00"}` | Error: precio requerido | `400` | | |
 | V-S04 | Validación | `api/servicios/` | ADMIN | Duración inválida (0 minutos) | `{"nombre":"Test","duracion":"00:00","precio":5000}` | Error: duración mínima 1 minuto | `400` | | |
 | V-S05 | Validación | `api/servicios/` | ADMIN | Precio negativo | `{"nombre":"Test","duracion":"01:00","precio":-100}` | Error: precio mínimo 0 | `400` | | |
-| V-S06 | Validación | `api/servicios/` | ADMIN | Nombre excede 100 caracteres | `{"nombre":"A"*101,"duracion":"01:00","precio":5000}` | Error: max_length 100 | `400` | | |
+| V-S06 | Validación | `api/servicios/` | ADMIN | Nombre excede 100 caracteres | `{"nombre":"<string de 101 caracteres: 'A' x101>","duracion":"01:00","precio":5000}` | Error: max_length 100 | `400` | | |
 
 ### 2.2 Turnos — Validaciones de entrada
 
@@ -244,7 +244,7 @@
 | B-10 | Borde | `api/turnos/{id}/` | CLIENTE | Editar turno propio cambiando solo la hora | `{"hora":"15:00"}` (PUT parcial) | Turno actualizado, otros campos sin cambios | `200` | | |
 | B-11 | Borde | `api/auth/register/` | Sin auth | Registrar con password numérico corto | `{"username":"test","email":"t@t.com","password":"1234"}` | Rechazado por validadores de contraseña de Django | `400` | | |
 | B-12 | Borde | `api/turnos/` | CLIENTE | Crear turno para servicioID inexistente | `{"fecha":"2026-09-01","hora":"10:00","servicio":99999}` | Error: servicio no encontrado | `400` | `400` | ✅ Pass |
-| B-13 | Borde | `api/auth/profile/` | CLIENTE | JWT expirado | Token de acceso expirado | Token inválido | `401` | `401` | ✅ Pass |
+| B-13 | Borde | `api/auth/profile/` | CLIENTE | Token inválido (no expirado) | Token con forma/tipo inválido (no es un JWT expirado real) | Token inválido | `401` | `401` | ✅ Pass |
 | B-14 | Borde | `api/auth/profile/` | CLIENTE | JWT refresh token como access token | Usar refresh como Bearer | Token inválido | `401` | | |
 
 ---
