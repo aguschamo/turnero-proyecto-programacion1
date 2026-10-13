@@ -313,7 +313,8 @@ npm run dev
 ## 🎨 Diagrama de Diseño Inicial
 
 El esquema inicial de la interfaz y estructura general de la aplicación se encuentra disponible en:
-- **Diagrama de diseño inicial**: [Ver diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
+- **Diagrama versionado:** [docs/diagrama-diseno.md](docs/diagrama-diseno.md)
+- [Diagrama en Google Drive](https://drive.google.com/file/d/19cnAAHszI8-OzWzl4cwZVv5lq9__dYfW/view?usp=sharing)
 
 ---
 
