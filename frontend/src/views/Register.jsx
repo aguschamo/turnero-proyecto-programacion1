@@ -4,34 +4,66 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
 function Register() {
-  const { register, isAuthenticated } = useAuth()
+  const { register, isAuthenticated, isLoading } = useAuth()
   const navigate = useNavigate()
 
   const [nombre, setNombre] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmar, setConfirmar] = useState('')
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (isAuthenticated) {
+  if (!isLoading && isAuthenticated) {
     return <Navigate to="/perfil" replace />
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
+    setError('')
+
     if (!nombre.trim()) {
       setError('El nombre es obligatorio.')
+      return
+    }
+    if (!username.trim()) {
+      setError('El nombre de usuario es obligatorio.')
       return
     }
     if (password !== confirmar) {
       setError('Las contraseñas no coinciden.')
       return
     }
-    if (!register(nombre, email, password)) {
-      setError('Ya existe una cuenta con ese correo.')
-      return
+
+    setIsSubmitting(true)
+    try {
+      await register({
+        nombre: nombre.trim(),
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+      })
+      navigate('/login', { replace: true, state: { registroOk: true } })
+    } catch (err) {
+      if (err.status === 0) {
+        setError(err.message)
+      } else if (err.data && typeof err.data === 'object') {
+        // Mostrar el primer error de campo devuelto por Django
+        const firstKey = Object.keys(err.data)[0]
+        if (firstKey && Array.isArray(err.data[firstKey])) {
+          setError(err.data[firstKey][0])
+        } else if (firstKey && typeof err.data[firstKey] === 'string') {
+          setError(err.data[firstKey])
+        } else {
+          setError(err.message || 'No se pudo crear la cuenta.')
+        }
+      } else {
+        setError(err.message || 'No se pudo crear la cuenta.')
+      }
+    } finally {
+      setIsSubmitting(false)
     }
-    navigate('/login', { replace: true, state: { registroOk: true } })
   }
 
   return (
@@ -68,6 +100,22 @@ function Register() {
                       onChange={(e) => setNombre(e.target.value)}
                       required
                       autoComplete="name"
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="registerUsername" className="form-label">
+                      Nombre de usuario
+                    </label>
+                    <input
+                      id="registerUsername"
+                      type="text"
+                      className="form-control"
+                      placeholder="Elegí un usuario"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      autoComplete="username"
                     />
                   </div>
 
@@ -125,8 +173,12 @@ function Register() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-hn-dark w-100 fw-bold">
-                    CREAR CUENTA
+                  <button
+                    type="submit"
+                    className="btn btn-hn-dark w-100 fw-bold"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'CREANDO CUENTA…' : 'CREAR CUENTA'}
                   </button>
                 </form>
 

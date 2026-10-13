@@ -1,91 +1,101 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+import { api, clearTokens, getAccessToken, onAuthCleared, setTokens } from '../services/api.js'
+
 const AuthContext = createContext(null)
 
-// MOCK de autenticación (TP4/TP5): las passwords viven solo en el cliente.
-// TP8: se reemplazan por API + JWT (POST /api/auth/login/), password solo en el servidor.
-const USUARIOS_INICIALES = [
-  {
-    id: 1,
-    nombre: 'Cliente Demo',
-    email: 'cliente@holynails.com',
-    password: '1234',
-    role: 'cliente',
-    photo: null,
-  },
-  {
-    id: 2,
-    nombre: 'Admin Holy Nails',
-    email: 'admin@holynails.com',
-    password: '1234',
-    role: 'admin',
-    photo: null,
-  },
-]
+function normalizeRole(role) {
+  return role ? role.toLowerCase() : null
+}
 
-function modeloUsuario({ id, nombre, email, role, photo }) {
-  return { id, nombre, email, role, photo }
+function normalizeUser(profile) {
+  if (!profile) return null
+  return {
+    id: profile.id,
+    nombre: profile.nombre || '',
+    email: profile.email || '',
+    username: profile.username || '',
+    role: normalizeRole(profile.role),
+    photo: null,
+  }
 }
 
 export function AuthProvider({ children }) {
-  const [usuarios, setUsuarios] = useState(USUARIOS_INICIALES)
-  const [usuario, setUsuario] = useState(() => {
-    try {
-      const sesionGuardada = sessionStorage.getItem('hn_sesion')
-      return sesionGuardada ? JSON.parse(sesionGuardada) : null
-    } catch {
-      return null
-    }
-  })
+  const [usuario, setUsuario] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Sincroniza la sesión con sessionStorage: persiste al loguearse, limpia al cerrar sesión o hacer F5-logout.
+  // Restaura la sesión al montar: si hay access token, verifica el perfil contra el backend.
+  // api.js maneja el refresh automático si el access está vencido.
   useEffect(() => {
-    if (usuario) {
-      sessionStorage.setItem('hn_sesion', JSON.stringify(usuario))
-    } else {
-      sessionStorage.removeItem('hn_sesion')
-    }
-  }, [usuario])
+    let cancelled = false
 
-  const login = useCallback((email, password) => {
-    const encontrado = usuarios.find(
-      (u) =>
-        u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password,
+    async function restore() {
+      if (!getAccessToken()) {
+        if (!cancelled) setIsLoading(false)
+        return
+      }
+      try {
+        const profile = await api.get('/api/auth/profile/')
+        if (!cancelled) setUsuario(normalizeUser(profile))
+      } catch {
+        if (!cancelled) setUsuario(null)
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+
+    restore()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Si api.js limpia los tokens (refresh falló), sincroniza el estado.
+  useEffect(() => {
+    return onAuthCleared(() => {
+      setUsuario(null)
+    })
+  }, [])
+
+  const login = useCallback(async (email, password) => {
+    const data = await api.post(
+      '/api/auth/login/',
+      { email, password },
+      { skipAuth: true },
     )
-    if (!encontrado) return null
-    const sesion = modeloUsuario(encontrado)
-    setUsuario(sesion)
-    return sesion
-  }, [usuarios])
+    setTokens({ access: data.access, refresh: data.refresh })
+    const profile = await api.get('/api/auth/profile/')
+    const user = normalizeUser(profile)
+    setUsuario(user)
+    return user
+  }, [])
 
-  const register = useCallback((nombre, email, password) => {
-    if (usuarios.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())) {
-      return false
-    }
-    const nuevo = {
-      id: crypto.randomUUID(),
-      nombre: nombre.trim() || null,
-      email: email.trim().toLowerCase(),
-      password,
-      role: 'cliente',
-      photo: null,
-    }
-    setUsuarios((prev) => [...prev, nuevo])
-    return true
-  }, [usuarios])
+  const register = useCallback(async ({ nombre, username, email, password }) => {
+    await api.post(
+      '/api/auth/register/',
+      { nombre, username, email, password },
+      { skipAuth: true },
+    )
+    // El backend no devuelve tokens: el usuario debe iniciar sesión después.
+  }, [])
 
   const logout = useCallback(() => {
+    clearTokens()
     setUsuario(null)
   }, [])
 
-  const value = useMemo(() => ({
-    usuario,
-    role: usuario ? usuario.role : null,
-    isAuthenticated: Boolean(usuario),
-    login,
-    register,
-    logout,
-  }), [usuario, login, register, logout])
+  const value = useMemo(
+    () => ({
+      usuario,
+      role: usuario ? usuario.role : null,
+      isAuthenticated: Boolean(usuario),
+      isLoading,
+      login,
+      register,
+      logout,
+    }),
+    [usuario, isLoading, login, register, logout],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
